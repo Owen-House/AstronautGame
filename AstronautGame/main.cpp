@@ -1,6 +1,7 @@
 #include <SFML/Graphics.hpp>
 #include <iostream>
 #include <vector>
+#include "Player.h"
 
 int main()
 {
@@ -10,24 +11,29 @@ int main()
     unsigned int SCREEN_HEIGHT = 1080;
 
     float astronautScale = 6.f;
-    float numSurfaces = 2.0;
+    float numGroundSurfaces = 2.0;
     sf::Clock clock;
 
     const float gridSize = 150.f;
-
     sf::Vector2f mousePosGrid;
 
+    sf::FloatRect nextPos;
+
+    // Gravity
     float playerSpeed = 800.0;
+    const float groundHeight = float(SCREEN_HEIGHT - 300);
+    const float gravitySpeed = 0.3;
+    bool isJumping = false;
+
 
     //Open Window
     sf::RenderWindow* window = new sf::RenderWindow(sf::VideoMode({ SCREEN_WIDTH, SCREEN_HEIGHT }), "AstronautGame");
     //window->setFramerateLimit(120);
 
 
-
 #pragma region Textures
-    sf::Texture astronautTexture;
 
+    sf::Texture astronautTexture;
     if (!astronautTexture.loadFromFile("resources/AstronautAnimations.png"))
     {
         std::cerr << "ERROR::COULD NOT LOAD FILE::resources/AstronautAnimations.png" << std::endl;
@@ -35,65 +41,38 @@ int main()
     }
 
     sf::Texture moonTexture;
-
     if (!moonTexture.loadFromFile("resources/MoonSurface.png"))
     {
         std::cerr << "ERROR::COULD NOT LOAD FILE::resources/MoonSurface.png" << std::endl;
         return -1;
     }
+
 #pragma endregion
 
-#pragma region Sprites
 
-    
-
+    // Load Player
     sf::Sprite astronautSprite(astronautTexture);
-    sf::Vector2f astronautOrigin = { 0.0, 0.0 };
-    astronautSprite.setTextureRect(sf::IntRect({ 0, 0 }, { 16, 16 }));
-    astronautSprite.setOrigin(astronautOrigin);
-    astronautSprite.setPosition({ 80, float(SCREEN_HEIGHT - 300)});
-    astronautSprite.setScale(sf::Vector2f({ astronautScale, astronautScale }));
+    Player player({ 9, 10 }, { 80, float(SCREEN_HEIGHT - 300) }, sf::IntRect({ 0, 0 }, { 16, 16 }), astronautSprite, astronautScale);
+    player.alignHitBoxToPlayer(3, 6);
 
+    // Load Ground
     std::vector<sf::Sprite> moonSurfaces;
-    for (auto i = 0; i < numSurfaces; i++) 
+    for (auto i = 0; i < numGroundSurfaces; i++) 
     {
         sf::Sprite moonSprite(moonTexture);
         moonSprite.setOrigin({ 0, 32 });
-        moonSprite.setPosition({ float(i * (SCREEN_WIDTH / numSurfaces)), float(SCREEN_HEIGHT)});
+        moonSprite.setPosition({ float(i * (SCREEN_WIDTH / numGroundSurfaces)), float(SCREEN_HEIGHT)});
         moonSprite.setScale(sf::Vector2f({ 7.5, 7.5 }));
         moonSurfaces.push_back(moonSprite);
     }
     
-
-
-#pragma endregion
-
-
-    // Walls
+    // Platforms
     std::vector<sf::RectangleShape> platforms;
-
     sf::RectangleShape platform;
+
     platform.setFillColor(sf::Color::Red);
     platform.setSize(sf::Vector2f(gridSize, gridSize));
     platform.setPosition(sf::Vector2f(SCREEN_WIDTH / 2.0f, SCREEN_HEIGHT / 2.0f));
-
-    //platforms.push_back(platform);
-    
-    // Game Clock
-
-    // Collision Stuff
-    sf::FloatRect nextPos;
-    sf::RectangleShape astronautHitBox;
-    astronautHitBox.setSize(sf::Vector2f(9, 10));
-    astronautHitBox.setScale(sf::Vector2f({ astronautScale, astronautScale }));
-    astronautHitBox.setFillColor(sf::Color::Transparent);
-    astronautHitBox.setPosition({ astronautSprite.getPosition().x + 3 * astronautScale,
-        astronautSprite.getPosition().y + 6 * astronautScale });
-    
-    // Show hitbox
-    //astronautHitBox.setOutlineColor(sf::Color::White);
-    //astronautHitBox.setOutlineThickness(.1f);
-
 
     // Main/Game Loop
     while (window->isOpen())
@@ -161,7 +140,7 @@ int main()
 
         for (auto& platform : platforms)
         {
-            sf::FloatRect playerBounds = astronautHitBox.getGlobalBounds();
+            sf::FloatRect playerBounds = player.getHitbox().getGlobalBounds();
             sf::FloatRect platformBounds = platform.getGlobalBounds();
 
             nextPos = playerBounds;
@@ -180,7 +159,7 @@ int main()
                     && playerBounds.position.x + playerBounds.size.x > platformBounds.position.x)
                 {
                     velocity.y = 0.f;
-                    astronautHitBox.setPosition({playerBounds.position.x, platformBounds.position.y - playerBounds.size.y});
+                    player.getHitbox().setPosition({playerBounds.position.x, platformBounds.position.y - playerBounds.size.y});
                 }
 
                 // Platform Bottom Collision
@@ -190,7 +169,7 @@ int main()
                     && playerBounds.position.x + playerBounds.size.x > platformBounds.position.x)
                 {
                     velocity.y = 0.f;
-                    astronautHitBox.setPosition({ playerBounds.position.x , platformBounds.position.y + platformBounds.size.y});
+                    player.getHitbox().setPosition({ playerBounds.position.x , platformBounds.position.y + platformBounds.size.y});
                 }
 
 
@@ -201,7 +180,7 @@ int main()
                     && playerBounds.position.y  + playerBounds.size.y > platformBounds.position.y)
                 {
                     velocity.x = 0.f;
-                    astronautHitBox.setPosition({ platformBounds.position.x - astronautHitBox.getSize().x * astronautScale, playerBounds.position.y });
+                    player.getHitbox().setPosition({ platformBounds.position.x - player.getHitbox().getSize().x * astronautScale, playerBounds.position.y });
                 }
 
                 // Platform Right Collision
@@ -211,7 +190,7 @@ int main()
                     && playerBounds.position.y + playerBounds.size.y > platformBounds.position.y)
                 {
                     velocity.x = 0.f;
-                    astronautHitBox.setPosition({ platformBounds.position.x + platformBounds.size.x ,playerBounds.position.y });
+                    player.getHitbox().setPosition({ platformBounds.position.x + platformBounds.size.x ,playerBounds.position.y });
                 }
 
 
@@ -223,30 +202,32 @@ int main()
 #pragma endregion
 
     // Execute movement
-    astronautHitBox.move(velocity);
-    astronautSprite.setPosition({ astronautHitBox.getPosition().x - 3 * astronautScale, astronautHitBox.getPosition().y - 6 * astronautScale});
+    player.getHitbox().move(velocity);
+    //astronautSprite.setPosition({ player.getHitbox().getPosition().x - 3 * astronautScale, player.getHitbox().getPosition().y - 6 * astronautScale});
+    player.alignPlayerToHitBox(3, 6);
 
 #pragma region Screen Collision
 
         // Left Collision
-        if (astronautHitBox.getPosition().x < 0)
+        if (player.getHitbox().getPosition().x < 0)
         {
-            astronautHitBox.setPosition({ 0, astronautHitBox.getPosition().y });
+            player.getHitbox().setPosition({ 0, player.getHitbox().getPosition().y });
         }
         // Right Collision
-        if (astronautHitBox.getPosition().x > SCREEN_WIDTH - astronautHitBox.getSize().x * astronautScale)
+        if (player.getHitbox().getPosition().x > SCREEN_WIDTH - player.getHitbox().getSize().x * astronautScale)
         {
-            astronautHitBox.setPosition({ SCREEN_WIDTH - astronautHitBox.getSize().x * astronautScale, astronautHitBox.getPosition().y });
+            player.getHitbox().setPosition({ SCREEN_WIDTH - player.getHitbox().getSize().x * astronautScale, player.getHitbox().getPosition().y });
         }
         // Top Collision
-        if (astronautHitBox.getPosition().y < 0)
+        if (player.getHitbox().getPosition().y < 0)
         {
-            astronautHitBox.setPosition({ astronautHitBox.getPosition().x, 0 });
+            player.getHitbox().setPosition({ player.getHitbox().getPosition().x, 0 });
         }
         // Bottom Collision
-        if (astronautHitBox.getPosition().y > SCREEN_HEIGHT - astronautHitBox.getSize().y * astronautScale)
+        if (player.getHitbox().getPosition().y > SCREEN_HEIGHT - player.getHitbox().getSize().y * astronautScale)
         {
-            astronautHitBox.setPosition({ astronautHitBox.getPosition().x, SCREEN_HEIGHT - astronautHitBox.getSize().y * astronautScale });
+
+            player.getHitbox().setPosition({ player.getHitbox().getPosition().x, SCREEN_HEIGHT - player.getHitbox().getSize().y * astronautScale });
         }
 
 #pragma endregion
@@ -254,6 +235,7 @@ int main()
 
 
 
+#pragma region Rendering To Window
 
         // Render
         window->clear();
@@ -264,15 +246,14 @@ int main()
             window->draw(s);
         }
 
-        window->draw(astronautSprite);
-
         for (auto &i : platforms)
         {
             window->draw(i);
         }
 
-        window->draw(astronautHitBox);
+        player.drawTo(window);
 
+#pragma endregion
         // Display Window
         window->display();
     }
