@@ -44,7 +44,7 @@ public:
 		playerHitBox.move(distance);
 	}
 
-	void setPos(sf::Vector2f newPos)
+	void setPosition(sf::Vector2f newPos)
 	{
 		playerHitBox.setPosition(newPos);
 	}
@@ -54,7 +54,7 @@ public:
 		return playerHitBox;
 	}
 
-	sf::Sprite getSprite()
+	sf::Sprite& getSprite()
 	{
 		return playerSprite;
 	}
@@ -65,8 +65,29 @@ public:
 		playerHitBox.setOutlineThickness(.5);
 	}
 
+	sf::Vector2f getPosition()
+	{
+		return playerHitBox.getPosition();
+	}
+
+	sf::Vector2f getSize()
+	{
+		return playerHitBox.getSize() * scale;
+	}
+
+	sf::Vector2f &getVelocity()
+	{
+		return velocity;
+	}
+
+	void setVelocity(sf::Vector2f newVelocity)
+	{
+		velocity = newVelocity;
+	}
+
 private:
 	sf::RectangleShape playerHitBox;
 	sf::Sprite playerSprite;
 	float scale;
+	sf::Vector2f velocity;
 };
