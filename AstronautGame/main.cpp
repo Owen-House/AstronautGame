@@ -9,7 +9,7 @@ int main()
     unsigned int SCREEN_WIDTH= 1920;
     unsigned int SCREEN_HEIGHT = 1080;
     sf::RenderWindow* window = new sf::RenderWindow(sf::VideoMode({ SCREEN_WIDTH, SCREEN_HEIGHT }), "AstronautGame");
-    window->setFramerateLimit(120);
+    //window->setFramerateLimit(120);
 
 
 
@@ -33,12 +33,14 @@ int main()
 
 #pragma region Sprites
 
+    float astronautScale = 6.f;
+
     sf::Sprite astronautSprite(astronautTexture);
-    sf::Vector2f astronautOrigin = { 8.0f, 8.0f };
-    astronautSprite.setTextureRect(sf::IntRect({ 16, 0 }, { 16, 16 }));
+    sf::Vector2f astronautOrigin = { 0.0, 0.0 };
+    astronautSprite.setTextureRect(sf::IntRect({ 0, 0 }, { 16, 16 }));
     astronautSprite.setOrigin(astronautOrigin);
-    astronautSprite.setPosition({ 80, float(SCREEN_HEIGHT - 180)});
-    astronautSprite.setScale(sf::Vector2f({ 6, 6 }));
+    astronautSprite.setPosition({ 80, float(SCREEN_HEIGHT - 300)});
+    astronautSprite.setScale(sf::Vector2f({ astronautScale, astronautScale }));
 
     float numSurfaces = 2.0;
     std::vector<sf::Sprite> moonSurfaces;
@@ -55,9 +57,31 @@ int main()
 
 #pragma endregion
 
+
+    // Walls
+    std::vector<sf::RectangleShape> platforms;
+
+    sf::RectangleShape platform;
+    platform.setFillColor(sf::Color::Red);
+    platform.setSize(sf::Vector2f(200.0f, 200.0f));
+    platform.setPosition(sf::Vector2f(SCREEN_WIDTH / 2.0f, SCREEN_HEIGHT / 2.0f));
+
+    platforms.push_back(platform);
     
     // Game Clock
     sf::Clock clock;
+
+    // Collision Stuff
+    sf::FloatRect nextPos;
+    sf::RectangleShape astronautHitBox;
+    astronautHitBox.setSize(sf::Vector2f(9, 10));
+    astronautHitBox.setScale(sf::Vector2f({ astronautScale, astronautScale }));
+    astronautHitBox.setFillColor(sf::Color::Transparent);
+    //astronautHitBox.setOutlineColor(sf::Color::White);
+    //astronautHitBox.setOutlineThickness(.1f);
+    astronautHitBox.setPosition({ astronautSprite.getPosition().x + 3 * astronautScale,
+        astronautSprite.getPosition().y + 6 * astronautScale });
+     
 
     // Main/Game Loop
     while (window->isOpen())
@@ -72,8 +96,7 @@ int main()
 
         float deltaTime = clock.restart().asSeconds(); // Time between frames
 
-
-#pragma region Movement
+#pragma region Preparing Movement 
 
         float playerSpeed = 800.0;
         sf::Vector2f velocity = { 0.0f, 0.0f };
@@ -96,35 +119,61 @@ int main()
             velocity.x = -playerSpeed * deltaTime;
 
         }
-
-        astronautSprite.move(velocity);
 #pragma endregion
 
+#pragma region Collision
+        for (auto& platform : platforms)
+        {
+            sf::FloatRect playerBounds = astronautHitBox.getGlobalBounds();
+            sf::FloatRect platformBounds = platform.getGlobalBounds();
 
-#pragma region ScreenCollision
+            nextPos = playerBounds;
+            nextPos.position.x += velocity.x;
+            nextPos.position.y += velocity.y;
+
+            
+            if (platformBounds.findIntersection(nextPos))
+            {
+                // Right Collision
+
+            }
+        }
+
+
+
+#pragma endregion
+
+    // Execute movement
+    astronautHitBox.move(velocity);
+    astronautSprite.setPosition({ astronautHitBox.getPosition().x - 3 * astronautScale, astronautHitBox.getPosition().y - 6 * astronautScale});
+
+#pragma region Screen Collision
 
         // Left Collision
-        if (astronautSprite.getPosition().x < astronautOrigin.x + 20)
+        if (astronautHitBox.getPosition().x < 0)
         {
-            astronautSprite.setPosition({ astronautOrigin.x + 20, astronautSprite.getPosition().y });
+            astronautHitBox.setPosition({ 0, astronautHitBox.getPosition().y });
         }
         // Right Collision
-        if (astronautSprite.getPosition().x > SCREEN_WIDTH - astronautOrigin.x - 20)
+        if (astronautHitBox.getPosition().x > SCREEN_WIDTH - astronautHitBox.getSize().x * astronautScale)
         {
-            astronautSprite.setPosition({ SCREEN_WIDTH - astronautOrigin.x - 20, astronautSprite.getPosition().y });
+            astronautHitBox.setPosition({ SCREEN_WIDTH - astronautHitBox.getSize().x * astronautScale, astronautHitBox.getPosition().y });
         }
         // Top Collision
-        if (astronautSprite.getPosition().y < astronautOrigin.y + 20)
+        if (astronautHitBox.getPosition().y < 0)
         {
-            astronautSprite.setPosition({ astronautSprite.getPosition().x, astronautOrigin.y + 20 });
+            astronautHitBox.setPosition({ astronautHitBox.getPosition().x, 0 });
         }
         // Bottom Collision
-        if (astronautSprite.getPosition().y > SCREEN_HEIGHT - astronautOrigin.y - 120)
+        if (astronautHitBox.getPosition().y > SCREEN_HEIGHT - astronautHitBox.getSize().y * astronautScale)
         {
-            astronautSprite.setPosition({ astronautSprite.getPosition().x, SCREEN_HEIGHT - astronautOrigin.y - 120});
+            astronautHitBox.setPosition({ astronautHitBox.getPosition().x, SCREEN_HEIGHT - astronautHitBox.getSize().y * astronautScale });
         }
 
 #pragma endregion
+
+
+
 
 
         // Render
@@ -138,10 +187,15 @@ int main()
 
         window->draw(astronautSprite);
 
+        for (auto &i : platforms)
+        {
+            window->draw(i);
+        }
+
+        window->draw(astronautHitBox);
 
         // Display Window
         window->display();
-
     }
 
     delete window;
