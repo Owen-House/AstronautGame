@@ -5,9 +5,21 @@
 int main()
 {
 
-    //Open Window
+    
     unsigned int SCREEN_WIDTH= 1920;
     unsigned int SCREEN_HEIGHT = 1080;
+
+    float astronautScale = 6.f;
+    float numSurfaces = 2.0;
+    sf::Clock clock;
+
+    const float gridSize = 150.f;
+
+    sf::Vector2f mousePosGrid;
+
+    float playerSpeed = 800.0;
+
+    //Open Window
     sf::RenderWindow* window = new sf::RenderWindow(sf::VideoMode({ SCREEN_WIDTH, SCREEN_HEIGHT }), "AstronautGame");
     //window->setFramerateLimit(120);
 
@@ -33,7 +45,7 @@ int main()
 
 #pragma region Sprites
 
-    float astronautScale = 6.f;
+    
 
     sf::Sprite astronautSprite(astronautTexture);
     sf::Vector2f astronautOrigin = { 0.0, 0.0 };
@@ -42,13 +54,12 @@ int main()
     astronautSprite.setPosition({ 80, float(SCREEN_HEIGHT - 300)});
     astronautSprite.setScale(sf::Vector2f({ astronautScale, astronautScale }));
 
-    float numSurfaces = 2.0;
     std::vector<sf::Sprite> moonSurfaces;
     for (auto i = 0; i < numSurfaces; i++) 
     {
         sf::Sprite moonSprite(moonTexture);
         moonSprite.setOrigin({ 0, 32 });
-        moonSprite.setPosition({ i * (1920 / numSurfaces), float(SCREEN_HEIGHT)});
+        moonSprite.setPosition({ float(i * (SCREEN_WIDTH / numSurfaces)), float(SCREEN_HEIGHT)});
         moonSprite.setScale(sf::Vector2f({ 7.5, 7.5 }));
         moonSurfaces.push_back(moonSprite);
     }
@@ -63,13 +74,12 @@ int main()
 
     sf::RectangleShape platform;
     platform.setFillColor(sf::Color::Red);
-    platform.setSize(sf::Vector2f(200.0f, 200.0f));
+    platform.setSize(sf::Vector2f(gridSize, gridSize));
     platform.setPosition(sf::Vector2f(SCREEN_WIDTH / 2.0f, SCREEN_HEIGHT / 2.0f));
 
-    platforms.push_back(platform);
+    //platforms.push_back(platform);
     
     // Game Clock
-    sf::Clock clock;
 
     // Collision Stuff
     sf::FloatRect nextPos;
@@ -77,11 +87,13 @@ int main()
     astronautHitBox.setSize(sf::Vector2f(9, 10));
     astronautHitBox.setScale(sf::Vector2f({ astronautScale, astronautScale }));
     astronautHitBox.setFillColor(sf::Color::Transparent);
-    //astronautHitBox.setOutlineColor(sf::Color::White);
-    //astronautHitBox.setOutlineThickness(.1f);
     astronautHitBox.setPosition({ astronautSprite.getPosition().x + 3 * astronautScale,
         astronautSprite.getPosition().y + 6 * astronautScale });
-     
+    
+    // Show hitbox
+    //astronautHitBox.setOutlineColor(sf::Color::White);
+    //astronautHitBox.setOutlineThickness(.1f);
+
 
     // Main/Game Loop
     while (window->isOpen())
@@ -98,7 +110,7 @@ int main()
 
 #pragma region Preparing Movement 
 
-        float playerSpeed = 800.0;
+        
         sf::Vector2f velocity = { 0.0f, 0.0f };
 
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Scan::W))
@@ -121,7 +133,32 @@ int main()
         }
 #pragma endregion
 
-#pragma region Collision
+#pragma region Platform Collision
+
+        mousePosGrid.x = sf::Mouse::getPosition(*window).x / (int)gridSize;
+        mousePosGrid.y = sf::Mouse::getPosition(*window).y / (int)gridSize;
+
+
+        // Add Platforms
+        if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Left))
+        {
+            bool exists = false;
+            for (size_t i = 0; i < platforms.size() && !exists; i++)
+            {
+                if (platforms[i].getPosition().x / (int)gridSize == mousePosGrid.x
+                    && platforms[i].getPosition().y / (int)gridSize == mousePosGrid.y)
+                {
+                    exists = true;
+                }
+            }
+
+            if (!exists)
+            {
+                platform.setPosition({ mousePosGrid.x * gridSize, mousePosGrid.y * gridSize});
+                platforms.push_back(platform);
+            }
+        }
+
         for (auto& platform : platforms)
         {
             sf::FloatRect playerBounds = astronautHitBox.getGlobalBounds();
@@ -132,9 +169,51 @@ int main()
             nextPos.position.y += velocity.y;
 
             
+            
             if (platformBounds.findIntersection(nextPos))
             {
-                // Right Collision
+
+                // Platform Top Collision
+                if (playerBounds.position.y < platformBounds.position.y
+                    && playerBounds.position.y + playerBounds.size.y < platformBounds.position.y + platformBounds.size.y
+                    && playerBounds.position.x < platformBounds.position.x + platformBounds.size.x
+                    && playerBounds.position.x + playerBounds.size.x > platformBounds.position.x)
+                {
+                    velocity.y = 0.f;
+                    astronautHitBox.setPosition({playerBounds.position.x, platformBounds.position.y - playerBounds.size.y});
+                }
+
+                // Platform Bottom Collision
+                else if (playerBounds.position.y > platformBounds.position.y
+                    && playerBounds.position.y + playerBounds.size.y > platformBounds.position.y + platformBounds.size.y
+                    && playerBounds.position.x < platformBounds.position.x + platformBounds.size.x
+                    && playerBounds.position.x + playerBounds.size.x > platformBounds.position.x)
+                {
+                    velocity.y = 0.f;
+                    astronautHitBox.setPosition({ playerBounds.position.x , platformBounds.position.y + platformBounds.size.y});
+                }
+
+
+                // Platform Left Collision
+                if (playerBounds.position.x < platformBounds.position.x 
+                    && playerBounds.position.x + playerBounds.size.x < platformBounds.position.x + platformBounds.size.x 
+                    && playerBounds.position.y < platformBounds.position.y + platformBounds.size.y
+                    && playerBounds.position.y  + playerBounds.size.y > platformBounds.position.y)
+                {
+                    velocity.x = 0.f;
+                    astronautHitBox.setPosition({ platformBounds.position.x - astronautHitBox.getSize().x * astronautScale, playerBounds.position.y });
+                }
+
+                // Platform Right Collision
+                else if (playerBounds.position.x > platformBounds.position.x
+                    && playerBounds.position.x + playerBounds.size.x > platformBounds.position.x + platformBounds.size.x
+                    && playerBounds.position.y < platformBounds.position.y + platformBounds.size.y
+                    && playerBounds.position.y + playerBounds.size.y > platformBounds.position.y)
+                {
+                    velocity.x = 0.f;
+                    astronautHitBox.setPosition({ platformBounds.position.x + platformBounds.size.x ,playerBounds.position.y });
+                }
+
 
             }
         }
