@@ -22,15 +22,9 @@ public:
 
 	}
 
-	void alignHitBoxToPlayer(float xOffset, float yOffset)
+	void alignPlayerToHitBox()
 	{
-		playerHitBox.setPosition({ playerSprite.getPosition().x + xOffset * scale,
-			playerSprite.getPosition().y + yOffset * scale });
-	}
-
-	void alignPlayerToHitBox(float xOffset, float yOffset)
-	{
-		playerSprite.setPosition({ playerHitBox.getPosition().x - xOffset * scale, playerHitBox.getPosition().y - yOffset * scale });
+		playerSprite.setPosition({ playerHitBox.getPosition().x - spriteOffset.x * scale, playerHitBox.getPosition().y - spriteOffset.y * scale });
 	}
 
 	void drawTo(sf::RenderWindow *window)
@@ -62,7 +56,7 @@ public:
 	void showHitBox()
 	{
 		playerHitBox.setOutlineColor(sf::Color::White);
-		playerHitBox.setOutlineThickness(.5);
+		playerHitBox.setOutlineThickness(-.4);
 	}
 
 	sf::Vector2f getPosition()
@@ -85,9 +79,24 @@ public:
 		velocity = newVelocity;
 	}
 
+	void flipSprite()
+	{
+		playerSprite.setScale({ -scale, scale });
+		spriteOffset = { -12, 6 };
+		alignPlayerToHitBox();
+	}
+
+	void unflipSprite()
+	{
+		playerSprite.setScale({ scale, scale });
+		spriteOffset = { 3, 6 };
+		alignPlayerToHitBox();
+	}
+
 private:
 	sf::RectangleShape playerHitBox;
 	sf::Sprite playerSprite;
 	float scale;
 	sf::Vector2f velocity;
+	sf::Vector2f spriteOffset = { 3, 6 };
 };

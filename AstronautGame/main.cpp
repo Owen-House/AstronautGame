@@ -56,7 +56,9 @@ int main()
     // Load Player
     sf::Sprite astronautSprite(astronautTexture);
     Player player({ 9, 10 }, { 80, float(groundHeight - 400) }, sf::IntRect({ 0, 0 }, { 16, 16 }), astronautSprite, astronautScale);
-    player.alignHitBoxToPlayer(3, 6);
+    player.alignPlayerToHitBox();
+    //player.showHitBox();
+
 
     // Load Ground
     std::vector<sf::Sprite> moonSurfaces;
@@ -116,13 +118,13 @@ int main()
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Scan::D)) // Move Right
         {
             player.getVelocity().x = playerSpeed * deltaTime;
+            player.unflipSprite();
 
         }
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Scan::A)) // Move Left
         {
             player.getVelocity().x = -playerSpeed * deltaTime;
-
-
+            player.flipSprite();
         }
         //if (sf::Keyboard::isKeyPressed(sf::Keyboard::Scan::S))
         //{
@@ -234,7 +236,7 @@ int main()
         // Execute movement
         player.move(player.getVelocity());
         //astronautSprite.setPosition({ player.getHitbox().getPosition().x - 3 * astronautScale, player.getHitbox().getPosition().y - 6 * astronautScale});
-        player.alignPlayerToHitBox(3, 6);
+        player.alignPlayerToHitBox();
 
 #pragma region Screen Collision
 
@@ -244,7 +246,7 @@ int main()
             player.setPosition({ 0, player.getPosition().y });
         }
         // Right Collision
-        if (player.getPosition().x > SCREEN_WIDTH - player.getSize().x * astronautScale)
+        if (player.getPosition().x > SCREEN_WIDTH - player.getSize().x)
         {
             player.setPosition({ SCREEN_WIDTH - player.getSize().x, player.getPosition().y });
         }
