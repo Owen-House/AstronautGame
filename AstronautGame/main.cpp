@@ -12,7 +12,7 @@ int main()
 
     float astronautScale = 6.f;
     float numGroundSurfaces = 2.0f;
-    sf::Clock clock;
+    sf::Clock frameClock;
 
     const float gridSize = 150.f;
     sf::Vector2f mousePosGrid;
@@ -28,6 +28,8 @@ int main()
     sf::Clock jumpClock;
     jumpClock.reset();
 
+    //Animation
+    sf::Clock animationClock;
 
     //Open Window
     sf::RenderWindow* window = new sf::RenderWindow(sf::VideoMode({ SCREEN_WIDTH, SCREEN_HEIGHT }), "AstronautGame");
@@ -55,7 +57,7 @@ int main()
 
     // Load Player
     sf::Sprite astronautSprite(astronautTexture);
-    Player player({ 9, 10 }, { 80, float(groundHeight - 400) }, sf::IntRect({ 0, 0 }, { 16, 16 }), astronautSprite, astronautScale);
+    Player player({ 9, 10 }, { 80, float(groundHeight - 400) }, sf::IntRect({ 0, 16 }, { 16, 16 }), astronautSprite, astronautScale);
     player.alignPlayerToHitBox();
     //player.showHitBox();
 
@@ -95,20 +97,22 @@ int main()
             }
         }
 
-        float deltaTime = clock.restart().asSeconds(); // Time between frames
+        float deltaTime = frameClock.restart().asSeconds(); // Time between frames
 
 #pragma region Preparing Movement 
 
-
+        bool moving = false;
         player.setVelocity({ 0.f, 0.f });
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Scan::W) && jumpClock.getElapsedTime().asSeconds() < maxJumpTime) // Jump
         {
             player.getVelocity().y = -playerSpeed * deltaTime;
             isJumping = true;
+            player.jumpingAnimation(animationClock);
             if (!jumpClock.isRunning())
             {
                 jumpClock.restart();
             }
+            moving = true;
         }
         else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Scan::W) && jumpClock.getElapsedTime().asSeconds() >= maxJumpTime)
         {
@@ -119,17 +123,19 @@ int main()
         {
             player.getVelocity().x = playerSpeed * deltaTime;
             player.unflipSprite();
-
+            player.runningAnimation(animationClock);
+            moving = true;
         }
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Scan::A)) // Move Left
         {
             player.getVelocity().x = -playerSpeed * deltaTime;
             player.flipSprite();
+            player.runningAnimation(animationClock);
+            moving = true;
         }
-        //if (sf::Keyboard::isKeyPressed(sf::Keyboard::Scan::S))
-        //{
-        //    velocity.y = playerSpeed * deltaTime;
-        //}
+        if (!moving) {
+            player.idleAnimation(animationClock);
+        }
 
         // Gravity
         if (player.getPosition().y  < groundHeight - player.getSize().y && !isJumping)

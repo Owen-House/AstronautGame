@@ -6,8 +6,8 @@
 class Player {
 public:
 
-	Player(sf::Vector2f hitBoxSize, sf::Vector2f position,sf::IntRect textureRect, sf::Sprite player_sprite, float Scale)
-		: playerSprite(player_sprite), scale(Scale)
+	Player(sf::Vector2f hitBoxSize, sf::Vector2f position, sf::IntRect textureRect, sf::Sprite player_sprite, float Scale)
+		: playerSprite(player_sprite), scale(Scale), playerSpriteRect(textureRect)
 	{
 		//Sprite
 		playerSprite.setPosition(position);
@@ -93,10 +93,51 @@ public:
 		alignPlayerToHitBox();
 	}
 
+	void resetAnimationFrame()
+	{
+		playerSpriteRect.position.x = 0;
+		playerSpriteRect.position.y = 0;
+		playerSprite.setTextureRect(playerSpriteRect);
+	}
+
+	void runningAnimation(sf::Clock &animationClock) {
+		if (animationClock.getElapsedTime().asSeconds() > .1f)
+		{
+			playerSpriteRect.position.x = (playerSpriteRect.position.x + 16) % 224;
+			playerSpriteRect.position.y = 16;
+			playerSprite.setTextureRect(playerSpriteRect);
+			animationClock.restart();
+		}
+	}
+
+	void idleAnimation(sf::Clock& animationClock)
+	{
+		if (animationClock.getElapsedTime().asSeconds() > .5f)
+		{
+			playerSpriteRect.position.x = (playerSpriteRect.position.x + 16) % 64;
+			playerSpriteRect.position.y = 0;
+			playerSprite.setTextureRect(playerSpriteRect);
+			animationClock.restart();
+		}
+	}
+
+	void jumpingAnimation(sf::Clock& animationClock)
+	{
+		if (animationClock.getElapsedTime().asSeconds() > .1f)
+		{
+			playerSpriteRect.position.x = (playerSpriteRect.position.x + 16) % 144;
+			playerSpriteRect.position.y = 32;
+			playerSprite.setTextureRect(playerSpriteRect);
+			animationClock.restart();
+		}
+	}
+
 private:
 	sf::RectangleShape playerHitBox;
+	sf::IntRect playerSpriteRect;
 	sf::Sprite playerSprite;
 	float scale;
 	sf::Vector2f velocity;
 	sf::Vector2f spriteOffset = { 3, 6 };
+
 };
