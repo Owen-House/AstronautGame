@@ -3,25 +3,32 @@
 #include <vector>
 #include "Player.h"
 #include "Game.h"
+#include "Renderer.h"
+
 int main()
 {
     float deltaTime;
 
     unsigned int SCREEN_WIDTH = 1920;
     unsigned int SCREEN_HEIGHT = 1080;
+    sf::Clock frameClock;
+    
     //Open Window
     sf::RenderWindow* window = new sf::RenderWindow(sf::VideoMode({ SCREEN_WIDTH, SCREEN_HEIGHT }), "AstronautGame");
-    //window->setFramerateLimit(120);
+    //window->setFramerateLimit(240);
 
-    sf::Clock frameClock;
-
+    Renderer renderer(*window);
 
     Begin(window);
 
     // Main/Game Loop
     while (window->isOpen())
     {
-        //std::cout << "Jump Clock:" << jumpClock.getElapsedTime().asSeconds() << " isJumping: " << isJumping << std::endl;
+        deltaTime = frameClock.restart().asSeconds(); // Time between frames
+
+
+        player->setVelocity({ 0.0, 0.0 });
+
         // Event loop
         while (const std::optional event = window->pollEvent())
         {
@@ -30,11 +37,12 @@ int main()
                 window->close();
             if (event->is<sf::Event::KeyReleased>())
             {
+                auto keyEvent = event->getIf<sf::Event::KeyReleased>();
                 player->isJumping = false;
+                //endOfMovement(keyEvent, deltaTime);
             }
         }
 
-        deltaTime = frameClock.restart().asSeconds(); // Time between frames
 
         Update(deltaTime, window);
 

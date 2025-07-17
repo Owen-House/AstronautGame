@@ -2,6 +2,10 @@
 #include <SFML/Graphics.hpp>
 #include "Game.h"
 #include "Player.h"
+#include "Map.h"
+#include "Renderer.h"
+#include "Resources.h"
+#include <filesystem>
 
 unsigned int SCREEN_WIDTH = 1920;
 unsigned int SCREEN_HEIGHT = 1080;
@@ -24,10 +28,6 @@ float maxJumpTime = 0.3f; // Seconds
 sf::Clock jumpClock;
 sf::Clock animationClock;
 
-//Textures
-sf::Texture astronautTexture;
-sf::Texture moonTexture;
-
 // Player
 extern Player* player = nullptr;
 
@@ -35,31 +35,53 @@ std::vector<sf::RectangleShape> platforms;
 sf::RectangleShape platform;
 std::vector<sf::Sprite> moonSurfaces;
 
+//Map stuff
+Map map;
+
+void endOfMovement(const sf::Event::KeyReleased* keyEvent, float deltaTime)
+{
+    // Change velocity based on key released
+    if (keyEvent->code == sf::Keyboard::Key::W && player->getVelocity().y > 0)
+    {
+        std::cout << "W";
+        player->isJumping = false;
+        player->setVelocity({ player->getVelocity().x, 0.f });
+    }
+    else if (keyEvent->code == sf::Keyboard::Key::A && player->getVelocity().x < 0)
+    {
+        std::cout << "A";
+        player->setVelocity({ 0.f, player->getVelocity().y});
+    }
+    else if (keyEvent->code == sf::Keyboard::Key::D && player->getVelocity().x > 0)
+    {
+        std::cout << "D";
+        player->setVelocity({ 0.f, player->getVelocity().y });
+    }
+}
+
 void Begin(const sf::Window* window)
 {
     // Load textures
-    if (!astronautTexture.loadFromFile("resources/AstronautAnimations.png"))
+    for (auto& file : std::filesystem::directory_iterator("./resources/textures"))
     {
-        std::cerr << "ERROR::COULD NOT LOAD FILE::resources/AstronautAnimations.png" << std::endl;
-        std::abort();
-    }
-    if (!moonTexture.loadFromFile("resources/MoonSurface.png"))
-    {
-        std::cerr << "ERROR::COULD NOT LOAD FILE::resources/MoonSurface.png" << std::endl;
-        std::abort();
+        if (file.is_regular_file() && (file.path().extension() == ".png" ||
+            file.path().extension() == ".jpeg"))
+        {
+            Resources::textures[file.path().filename().string()].loadFromFile(file.path().string());
+        }
     }
     
     // Player Setup
-    player = new Player({ 9, 10 }, { 80, float(groundHeight - 400) }, sf::IntRect({ 0, 16 }, { 16, 16 }), astronautTexture, astronautScale);
+    player = new Player({ 9, 10 }, { 1000, 1000 }, sf::IntRect({ 0, 16 }, { 16, 16 }), Resources::textures["astronautAnimations.png"], astronautScale);
     player->alignPlayerToHitBox();
-    //player.showHitBox();
+    //player->showHitBox();
 
 	jumpClock.reset();
 
     // Load Ground
     for (auto i = 0; i < numGroundSurfaces; i++)
     {
-        sf::Sprite moonSprite(moonTexture);
+        sf::Sprite moonSprite(Resources::textures["MoonSurface.png"]);
         moonSprite.setOrigin({ 0, 32 });
         moonSprite.setPosition({ float(i * (SCREEN_WIDTH / numGroundSurfaces)), float(SCREEN_HEIGHT) });
         moonSprite.setScale(sf::Vector2f({ 7.5, 7.5 }));
@@ -70,6 +92,8 @@ void Begin(const sf::Window* window)
     platform.setFillColor(sf::Color::Red);
     platform.setSize(sf::Vector2f(gridSize, gridSize));
     platform.setPosition(sf::Vector2f(SCREEN_WIDTH / 2.0f, SCREEN_HEIGHT / 2.0f));
+
+    map.CreateCheckerboard(11, 11);
 }
 
 
@@ -78,7 +102,6 @@ void Update(float deltaTime, sf::RenderWindow *window)
 #pragma region Preparing Movement 
 
     bool moving = false;
-    player->setVelocity({ 0.f, 0.f });
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Scan::W) && jumpClock.getElapsedTime().asSeconds() < maxJumpTime) // Jump
     {
         player->getVelocity().y = -playerSpeed * deltaTime;
@@ -116,7 +139,6 @@ void Update(float deltaTime, sf::RenderWindow *window)
     // Gravity
     if (player->getPosition().y < groundHeight - player->getSize().y && !player->isJumping)
     {
-        std::cout << "===FALLING===" << std::endl;
         player->getVelocity().y += gravitySpeed * deltaTime;
     }
     else if (!player->isJumping)
@@ -236,19 +258,23 @@ void Update(float deltaTime, sf::RenderWindow *window)
     {
         player->setPosition({ player->getPosition().x, 0 });
     }
-    // Bottom Collision
-    //if (player.getPosition().y > SCREEN_HEIGHT - player.getSize().y * astronautScale)
-    //{
-    //    player.setPosition({ player.getPosition().x, groundHeight - player.getSize().y});
-   // }
 
 #pragma endregion
+
+#pragma region Map
+
+    map.CreateCheckerboard(11, 11);
+
+#pragma endregion
+
 }
 
 
 void Render(sf::RenderWindow* window)
 {
     window->clear();
+
+    map.Draw(window);
 
     for (sf::Sprite s : moonSurfaces)
     {
@@ -260,6 +286,7 @@ void Render(sf::RenderWindow* window)
     }
 
     player->drawTo(window);
+
 
     window->display();
 }

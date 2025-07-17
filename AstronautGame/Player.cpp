@@ -1,6 +1,7 @@
 #include <iostream>
 #include <SFML/Graphics.hpp>
 #include "Player.h"
+#include "Renderer.h"
 
 //Player::Player()
 //{
@@ -32,6 +33,11 @@ void Player::drawTo(sf::RenderWindow* window)
 {
 	window->draw(playerHitBox);
 	window->draw(playerSprite);
+}
+
+void Player::Draw(Renderer& renderer)
+{
+	renderer.Draw(playerTexture, position, size);
 }
 
 void Player::move(sf::Vector2f distance)
@@ -131,4 +137,9 @@ void Player::jumpingAnimation(sf::Clock& animationClock)
 		playerSprite.setTextureRect(playerSpriteRect);
 		animationClock.restart();
 	}
+}
+
+void Player::setTexture(const sf::Texture& texture)
+{
+	playerSprite.setTexture(texture);
 }

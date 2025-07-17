@@ -2,6 +2,7 @@
 
 #include <iostream>
 #include <SFML/Graphics.hpp>
+#include "Renderer.h"
 
 class Player {
 public:
@@ -33,17 +34,19 @@ public:
 	void idleAnimation(sf::Clock& animationClock);
 	void jumpingAnimation(sf::Clock& animationClock);
 
-	void setTexture(const sf::Texture& texture)
-	{
-		playerSprite.setTexture(texture);
-	}
+	void setTexture(const sf::Texture& texture);
+
+	void Draw(Renderer& renderer);
 
 private:
 	sf::RectangleShape playerHitBox;
 	sf::IntRect playerSpriteRect;
+	sf::Texture playerTexture;
 	sf::Sprite playerSprite;
 	float scale;
-	sf::Vector2f velocity;
-	sf::Vector2f spriteOffset = { 3, 6 };
+	sf::Vector2f velocity = { 0.f, 0.f };
+	sf::Vector2f spriteOffset = { 3.f, 6.f };
+	sf::Vector2f position;
+	sf::Vector2f size;
 
 };
