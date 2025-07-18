@@ -6,10 +6,11 @@ Renderer::Renderer(sf::RenderTarget& t)
 {
 }
 
-void Renderer::Draw(const sf::Texture& texture, const sf::Vector2f& position, const sf::Vector2f& size) 
+void Renderer::Draw(const sf::Texture& texture, const sf::Vector2f& position, const sf::Vector2f& size, const sf::IntRect& textureRect)
 {
-	sprite = new sf::Sprite(texture);
-	sprite->setPosition(position);
-	sprite->setScale(sf::Vector2f(size.x / texture.getSize().x, size.y / texture.getSize().y));
-	target.draw(*sprite);
+	sf::Sprite sprite(texture);
+	sprite.setPosition(position);
+	sprite.setScale(sf::Vector2f(size.x / textureRect.size.x, size.y / textureRect.size.y));
+	sprite.setTextureRect(textureRect);
+	target.draw(sprite);
 }

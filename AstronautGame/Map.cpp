@@ -33,7 +33,7 @@ void Map::Draw(sf::RenderWindow* window)
 			if (cell)
 			{
 				sf::Sprite block(Resources::textures["Tileset_13.png"]);
-				block.setTextureRect(sf::IntRect({ 0,0 }, { 16,16 }));
+				block.setTextureRect(sf::IntRect({ 1,0 }, { 16,16 }));
 				block.setPosition({ cellSize * x + cellSize / 2.f, cellSize * y + cellSize / 2.f });
 				block.setScale({ cellSize / 16, cellSize / 16});
 				window->draw(block);

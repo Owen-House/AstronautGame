@@ -3,77 +3,80 @@
 #include "Player.h"
 #include "Renderer.h"
 
-//Player::Player()
-//{
-//
-//}
 
-Player::Player(sf::Vector2f hitBoxSize, sf::Vector2f position, sf::IntRect textureRect, sf::Texture &player_texture, float Scale)
-	: playerSprite(sf::Sprite(player_texture)), scale(Scale), playerSpriteRect(textureRect)
+
+
+Player::Player(sf::Vector2f hitBoxSize, sf::Vector2f position, sf::IntRect spriteRect, sf::Texture &player_texture, sf::Vector2f size)
+	: position(position), size(size), spriteRect(spriteRect), texture(player_texture)
 {
-	//Sprite
-	playerSprite.setPosition(position);
-	playerSprite.setScale({ scale , scale });
-	playerSprite.setTextureRect(textureRect);
-
 	//HitBox
-	playerHitBox.setSize(hitBoxSize);
-	playerHitBox.setFillColor(sf::Color::Transparent);
-	playerHitBox.setSize(hitBoxSize);
-	playerHitBox.setScale(sf::Vector2f({ scale, scale }));
-
+	hitBox.setSize(hitBoxSize);
+	hitBox.setFillColor(sf::Color::Transparent);
+	hitBox.setScale(sf::Vector2f({ size.x / spriteRect.size.x, size.y / spriteRect.size.y }));
+	
+	scale = size.x / spriteRect.size.x;
 }
 
 void Player::alignPlayerToHitBox()
 {
-	playerSprite.setPosition({ playerHitBox.getPosition().x - spriteOffset.x * scale, playerHitBox.getPosition().y - spriteOffset.y * scale });
+	position = { hitBox.getPosition().x - offset.x * scale, hitBox.getPosition().y - offset.y * scale };
 }
 
 void Player::drawTo(sf::RenderWindow* window)
 {
-	window->draw(playerHitBox);
-	window->draw(playerSprite);
+	window->draw(hitBox);
 }
 
 void Player::Draw(Renderer& renderer)
 {
-	renderer.Draw(playerTexture, position, size);
+	if (facingLeft)
+	{
+		flipSprite();
+	}
+	else
+	{
+		unflipSprite();
+	}
+	renderer.Draw(texture, position, size, spriteRect);
 }
 
 void Player::move(sf::Vector2f distance)
 {
-	playerHitBox.move(distance);
+	hitBox.move(distance);
+	if (distance.x < 0)
+	{
+		facingLeft = true;
+	}
+	else if (distance.x > 0)
+	{
+		facingLeft = false;
+	}
 }
 
 void Player::setPosition(sf::Vector2f newPos)
 {
-	playerHitBox.setPosition(newPos);
+	hitBox.setPosition(newPos);
 }
 
 sf::RectangleShape& Player::getHitbox()
 {
-	return playerHitBox;
-}
-
-sf::Sprite& Player::getSprite()
-{
-	return playerSprite;
+	return hitBox;
 }
 
 void Player::showHitBox()
 {
-	playerHitBox.setOutlineColor(sf::Color::White);
-	playerHitBox.setOutlineThickness(-.4f);
+	hitBox.setOutlineColor(sf::Color::White);
+	hitBox.setOutlineThickness(-.4f);
 }
 
 sf::Vector2f Player::getPosition()
 {
-	return playerHitBox.getPosition();
+	return hitBox.getPosition();
 }
 
 sf::Vector2f Player::getSize()
 {
-	return playerHitBox.getSize() * scale;
+	return hitBox.getSize() * scale;
 }
 
 sf::Vector2f& Player::getVelocity()
@@ -88,31 +91,21 @@ void Player::setVelocity(sf::Vector2f newVelocity)
 
 void Player::flipSprite()
 {
-	playerSprite.setScale({ -scale, scale });
-	spriteOffset = { -12, 6 };
+	offset = { -12, 6 };
 	alignPlayerToHitBox();
 }
 
 void Player::unflipSprite()
 {
-	playerSprite.setScale({ scale, scale });
-	spriteOffset = { 3, 6 };
+	offset = { 3, 6 };
 	alignPlayerToHitBox();
-}
-
-void Player::resetAnimationFrame()
-{
-	playerSpriteRect.position.x = 0;
-	playerSpriteRect.position.y = 0;
-	playerSprite.setTextureRect(playerSpriteRect);
 }
 
 void Player::runningAnimation(sf::Clock& animationClock) {
 	if (animationClock.getElapsedTime().asSeconds() > .1f)
 	{
-		playerSpriteRect.position.x = (playerSpriteRect.position.x + 16) % 224;
-		playerSpriteRect.position.y = 16;
-		playerSprite.setTextureRect(playerSpriteRect);
+		spriteRect.position.x = (spriteRect.position.x + 16) % 224;
+		spriteRect.position.y = 16;
 		animationClock.restart();
 	}
 }
@@ -121,9 +114,8 @@ void Player::idleAnimation(sf::Clock& animationClock)
 {
 	if (animationClock.getElapsedTime().asSeconds() > .5f)
 	{
-		playerSpriteRect.position.x = (playerSpriteRect.position.x + 16) % 64;
-		playerSpriteRect.position.y = 0;
-		playerSprite.setTextureRect(playerSpriteRect);
+		spriteRect.position.x = (spriteRect.position.x + 16) % 64;
+		spriteRect.position.y = 0;
 		animationClock.restart();
 	}
 }
@@ -132,14 +124,8 @@ void Player::jumpingAnimation(sf::Clock& animationClock)
 {
 	if (animationClock.getElapsedTime().asSeconds() > .1f)
 	{
-		playerSpriteRect.position.x = (playerSpriteRect.position.x + 16) % 144;
-		playerSpriteRect.position.y = 32;
-		playerSprite.setTextureRect(playerSpriteRect);
+		spriteRect.position.x = (spriteRect.position.x + 16) % 144;
+		spriteRect.position.y = 32;
 		animationClock.restart();
 	}
-}
-
-void Player::setTexture(const sf::Texture& texture)
-{
-	playerSprite.setTexture(texture);
 }

@@ -72,9 +72,9 @@ void Begin(const sf::Window* window)
     }
     
     // Player Setup
-    player = new Player({ 9, 10 }, { 1000, 1000 }, sf::IntRect({ 0, 16 }, { 16, 16 }), Resources::textures["astronautAnimations.png"], astronautScale);
+    player = new Player({ 9, 10 }, { 1000, 1000 }, sf::IntRect({ 0, 16 }, { 16, 16 }), Resources::textures["astronautAnimations.png"], {100, 100});
     player->alignPlayerToHitBox();
-    //player->showHitBox();
+    player->showHitBox();
 
 	jumpClock.reset();
 
@@ -121,14 +121,14 @@ void Update(float deltaTime, sf::RenderWindow *window)
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Scan::D)) // Move Right
     {
         player->getVelocity().x = playerSpeed * deltaTime;
-        player->unflipSprite();
+        //player->unflipSprite();
         player->runningAnimation(animationClock);
         moving = true;
     }
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Scan::A)) // Move Left
     {
         player->getVelocity().x = -playerSpeed * deltaTime;
-        player->flipSprite();
+        //player->flipSprite();
         player->runningAnimation(animationClock);
         moving = true;
     }
@@ -270,7 +270,7 @@ void Update(float deltaTime, sf::RenderWindow *window)
 }
 
 
-void Render(sf::RenderWindow* window)
+void Render(sf::RenderWindow* window, Renderer& renderer)
 {
     window->clear();
 
@@ -285,8 +285,8 @@ void Render(sf::RenderWindow* window)
         window->draw(i);
     }
 
-    player->drawTo(window);
-
+    //player->drawTo(window);
+    player->Draw(renderer);
 
     window->display();
 }

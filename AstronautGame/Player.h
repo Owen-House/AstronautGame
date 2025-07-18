@@ -7,7 +7,7 @@
 class Player {
 public:
 	bool isJumping = false;
-	Player(sf::Vector2f hitBoxSize, sf::Vector2f position, sf::IntRect textureRect, sf::Texture& player_Texture, float Scale);
+	Player(sf::Vector2f hitBoxSize, sf::Vector2f position, sf::IntRect textureRect, sf::Texture& player_Texture, sf::Vector2f size);
 	// Hitbox
 	void alignPlayerToHitBox();
 	sf::RectangleShape& getHitbox();
@@ -39,14 +39,13 @@ public:
 	void Draw(Renderer& renderer);
 
 private:
-	sf::RectangleShape playerHitBox;
-	sf::IntRect playerSpriteRect;
-	sf::Texture playerTexture;
-	sf::Sprite playerSprite;
-	float scale;
+	sf::RectangleShape hitBox;
+	sf::IntRect spriteRect;
+	sf::Texture texture;
+	float scale = 6.f;
 	sf::Vector2f velocity = { 0.f, 0.f };
-	sf::Vector2f spriteOffset = { 3.f, 6.f };
+	sf::Vector2f offset = { 3.f, 6.f };
 	sf::Vector2f position;
 	sf::Vector2f size;
-
+	bool facingLeft = false;
 };

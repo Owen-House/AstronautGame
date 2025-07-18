@@ -4,6 +4,7 @@
 #include "Player.h"
 #include "Game.h"
 #include "Renderer.h"
+#include "Resources.h"
 
 int main()
 {
@@ -46,7 +47,10 @@ int main()
 
         Update(deltaTime, window);
 
-        Render(window);
+
+        Render(window, renderer);
+
+
     }
 
     delete player;
