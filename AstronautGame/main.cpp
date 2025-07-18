@@ -5,6 +5,7 @@
 #include "Game.h"
 #include "Renderer.h"
 #include "Resources.h"
+#include "Camera.h"
 
 int main()
 {
@@ -16,9 +17,10 @@ int main()
     
     //Open Window
     sf::RenderWindow* window = new sf::RenderWindow(sf::VideoMode({ SCREEN_WIDTH, SCREEN_HEIGHT }), "AstronautGame");
+    Renderer renderer(*window);
     //window->setFramerateLimit(240);
 
-    Renderer renderer(*window);
+    Camera camera;
 
     Begin(window);
 
@@ -43,6 +45,8 @@ int main()
                 //endOfMovement(keyEvent, deltaTime);
             }
         }
+
+        //window->setView(camera.GetView(window->getSize()));
 
 
         Update(deltaTime, window);
