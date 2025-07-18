@@ -3,8 +3,10 @@
 #include "Player.h"
 #include "Renderer.h"
 
-
-
+//Player::Player()
+//{
+//
+//}
 
 Player::Player(sf::Vector2f hitBoxSize, sf::Vector2f position, sf::IntRect spriteRect, sf::Texture &player_texture, sf::Vector2f size)
 	: position(position), size(size), spriteRect(spriteRect), texture(player_texture)
@@ -32,12 +34,13 @@ void Player::Draw(Renderer& renderer)
 	if (facingLeft)
 	{
 		flipSprite();
+		renderer.Draw(texture, position, { -size.x, size.y }, spriteRect);
 	}
 	else
 	{
 		unflipSprite();
+		renderer.Draw(texture, position, size, spriteRect);
 	}
-	renderer.Draw(texture, position, size, spriteRect);
 }
 
 void Player::move(sf::Vector2f distance)

@@ -22,7 +22,7 @@ void Map::CreateCheckerboard(size_t width, size_t height)
 
 }
 
-void Map::Draw(sf::RenderWindow* window)
+void Map::Draw(Renderer& renderer)
 {
 	int x = 0;
 	for (const auto& column : grid)
@@ -32,11 +32,8 @@ void Map::Draw(sf::RenderWindow* window)
 		{
 			if (cell)
 			{
-				sf::Sprite block(Resources::textures["Tileset_13.png"]);
-				block.setTextureRect(sf::IntRect({ 1,0 }, { 16,16 }));
-				block.setPosition({ cellSize * x + cellSize / 2.f, cellSize * y + cellSize / 2.f });
-				block.setScale({ cellSize / 16, cellSize / 16});
-				window->draw(block);
+				renderer.Draw(Resources::textures["Tileset_13.png"], { cellSize * x + cellSize / 2.f, cellSize * y + cellSize / 2.f },
+					{ cellSize, cellSize }, sf::IntRect({ 1,0 }, { 16,16 }));
 			}
 			y++;
 

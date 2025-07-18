@@ -47,10 +47,11 @@ int main()
 
         Update(deltaTime, window);
 
+        window->clear();
 
         Render(window, renderer);
 
-
+        window->display();
     }
 
     delete player;

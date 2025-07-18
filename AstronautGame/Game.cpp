@@ -272,9 +272,8 @@ void Update(float deltaTime, sf::RenderWindow *window)
 
 void Render(sf::RenderWindow* window, Renderer& renderer)
 {
-    window->clear();
 
-    map.Draw(window);
+    map.Draw(renderer);
 
     for (sf::Sprite s : moonSurfaces)
     {
@@ -287,6 +286,4 @@ void Render(sf::RenderWindow* window, Renderer& renderer)
 
     //player->drawTo(window);
     player->Draw(renderer);
-
-    window->display();
 }
