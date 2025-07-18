@@ -36,7 +36,7 @@ sf::RectangleShape platform;
 std::vector<sf::Sprite> moonSurfaces;
 
 //Map stuff
-Map map;
+Map map(54.0f);
 
 void endOfMovement(const sf::Event::KeyReleased* keyEvent, float deltaTime)
 {
@@ -74,26 +74,17 @@ void Begin(const sf::Window* window)
     // Player Setup
     player = new Player({ 9, 10 }, { 1000, 1000 }, sf::IntRect({ 0, 16 }, { 16, 16 }), Resources::textures["astronautAnimations.png"], {100, 100});
     player->alignPlayerToHitBox();
-    player->showHitBox();
 
 	jumpClock.reset();
-
-    // Load Ground
-    for (auto i = 0; i < numGroundSurfaces; i++)
-    {
-        sf::Sprite moonSprite(Resources::textures["MoonSurface.png"]);
-        moonSprite.setOrigin({ 0, 32 });
-        moonSprite.setPosition({ float(i * (SCREEN_WIDTH / numGroundSurfaces)), float(SCREEN_HEIGHT) });
-        moonSprite.setScale(sf::Vector2f({ 7.5, 7.5 }));
-        moonSurfaces.push_back(moonSprite);
-    }
 
     // Platforms
     platform.setFillColor(sf::Color::Red);
     platform.setSize(sf::Vector2f(gridSize, gridSize));
     platform.setPosition(sf::Vector2f(SCREEN_WIDTH / 2.0f, SCREEN_HEIGHT / 2.0f));
 
-    map.CreateCheckerboard(11, 11);
+    sf::Image image;
+    image.loadFromFile("resources/map.png");
+    map.CreateFromImage(image);
 }
 
 
@@ -263,7 +254,7 @@ void Update(float deltaTime, sf::RenderWindow *window)
 
 #pragma region Map
 
-    map.CreateCheckerboard(11, 11);
+    
 
 #pragma endregion
 
@@ -272,18 +263,13 @@ void Update(float deltaTime, sf::RenderWindow *window)
 
 void Render(sf::RenderWindow* window, Renderer& renderer)
 {
-
     map.Draw(renderer);
 
-    for (sf::Sprite s : moonSurfaces)
-    {
-        window->draw(s);
-    }
     for (auto& i : platforms)
     {
         window->draw(i);
     }
 
-    //player->drawTo(window);
+    player->drawHitBox(window);
     player->Draw(renderer);
 }

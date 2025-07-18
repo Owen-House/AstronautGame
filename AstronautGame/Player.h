@@ -11,14 +11,12 @@ public:
 	// Hitbox
 	void alignPlayerToHitBox();
 	sf::RectangleShape& getHitbox();
-	void showHitBox();
 
-	void drawTo(sf::RenderWindow* window);
+	void drawHitBox(sf::RenderWindow* window);
 
 	void move(sf::Vector2f distance);
 	void setPosition(sf::Vector2f newPos);
 
-	sf::Sprite& getSprite();
 	sf::Vector2f getPosition();
 	sf::Vector2f getSize();
 	sf::Vector2f& getVelocity();
@@ -29,12 +27,9 @@ public:
 	void unflipSprite();
 
 	// Animation
-	void resetAnimationFrame();
 	void runningAnimation(sf::Clock& animationClock);
 	void idleAnimation(sf::Clock& animationClock);
 	void jumpingAnimation(sf::Clock& animationClock);
-
-	void setTexture(const sf::Texture& texture);
 
 	void Draw(Renderer& renderer);
 

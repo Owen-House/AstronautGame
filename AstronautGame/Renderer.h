@@ -7,11 +7,8 @@ class Renderer
 
 public :
 	Renderer(sf::RenderTarget& t);
-
-
 	void Draw(const sf::Texture& texture, const sf::Vector2f& position, const sf::Vector2f& size, const sf::IntRect &textureRect);
 	
-
 private:
 	sf::RenderTarget& target;
 };

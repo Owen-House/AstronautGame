@@ -22,6 +22,25 @@ void Map::CreateCheckerboard(size_t width, size_t height)
 
 }
 
+void Map::CreateFromImage(const sf::Image& image)
+{
+	grid.clear();
+	grid = std::vector(image.getSize().x, std::vector(image.getSize().y, 0));
+
+	for (size_t x = 0; x < grid.size(); x++)
+	{
+		for (size_t y = 0; y < grid[x].size(); y++)
+		{
+			sf::Color color = image.getPixel({ x, y });
+			if (color == sf::Color::Black)
+			{
+				grid[x][y] = 1;
+			}
+		}
+	}
+}
+
+
 void Map::Draw(Renderer& renderer)
 {
 	int x = 0;
@@ -32,8 +51,8 @@ void Map::Draw(Renderer& renderer)
 		{
 			if (cell)
 			{
-				renderer.Draw(Resources::textures["Tileset_13.png"], { cellSize * x + cellSize / 2.f, cellSize * y + cellSize / 2.f },
-					{ cellSize, cellSize }, sf::IntRect({ 1,0 }, { 16,16 }));
+				renderer.Draw(Resources::textures["Tileset_13.png"], { cellSize * x , cellSize * y  },
+					{ cellSize, cellSize }, sf::IntRect({ 1,1 }, { 14, 14 }));
 			}
 			y++;
 

@@ -14,6 +14,8 @@ Player::Player(sf::Vector2f hitBoxSize, sf::Vector2f position, sf::IntRect sprit
 	//HitBox
 	hitBox.setSize(hitBoxSize);
 	hitBox.setFillColor(sf::Color::Transparent);
+	hitBox.setOutlineColor(sf::Color::White);
+	hitBox.setOutlineThickness(-.4f);
 	hitBox.setScale(sf::Vector2f({ size.x / spriteRect.size.x, size.y / spriteRect.size.y }));
 	
 	scale = size.x / spriteRect.size.x;
@@ -24,7 +26,7 @@ void Player::alignPlayerToHitBox()
 	position = { hitBox.getPosition().x - offset.x * scale, hitBox.getPosition().y - offset.y * scale };
 }
 
-void Player::drawTo(sf::RenderWindow* window)
+void Player::drawHitBox(sf::RenderWindow* window)
 {
 	window->draw(hitBox);
 }
@@ -66,12 +68,6 @@ sf::RectangleShape& Player::getHitbox()
 	return hitBox;
 }
 
-void Player::showHitBox()
-{
-	hitBox.setOutlineColor(sf::Color::White);
-	hitBox.setOutlineThickness(-.4f);
-}
-
 sf::Vector2f Player::getPosition()
 {
 	return hitBox.getPosition();
@@ -105,7 +101,7 @@ void Player::unflipSprite()
 }
 
 void Player::runningAnimation(sf::Clock& animationClock) {
-	if (animationClock.getElapsedTime().asSeconds() > .1f)
+	if (animationClock.getElapsedTime().asSeconds() > .05f)
 	{
 		spriteRect.position.x = (spriteRect.position.x + 16) % 224;
 		spriteRect.position.y = 16;
@@ -125,7 +121,7 @@ void Player::idleAnimation(sf::Clock& animationClock)
 
 void Player::jumpingAnimation(sf::Clock& animationClock)
 {
-	if (animationClock.getElapsedTime().asSeconds() > .1f)
+	if (animationClock.getElapsedTime().asSeconds() > .2f)
 	{
 		spriteRect.position.x = (spriteRect.position.x + 16) % 144;
 		spriteRect.position.y = 32;
