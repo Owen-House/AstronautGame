@@ -143,15 +143,17 @@ void Update(float deltaTime, sf::RenderWindow *window)
     }
 
     // Automatic Camera Movement
-    if (camera.position.x < player->getPosition().x - 300)
+    if (camera.position.x > player->getPosition().x + 300 && camera.position.x > 960)
     {
-        camera.position = sf::Vector2f({ camera.position.x + camera.moveSpeed * deltaTime, camera.position.y });
+        // Move Camera Left
+        camera.position.x -= camera.moveSpeed * deltaTime;
     }
-    else if (camera.position.x > player->getPosition().x + 300)
+    if ((camera.position.x < player->getPosition().x - 300))
     {
-        camera.position = sf::Vector2f({ camera.position.x - camera.moveSpeed * deltaTime, camera.position.y });
-
+        // Move Camera Right
+        camera.position.x += camera.moveSpeed * deltaTime;
     }
+    
 
 #pragma endregion
 
