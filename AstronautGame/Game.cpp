@@ -53,7 +53,7 @@ void Begin(const sf::Window* window)
     }
     
     // Player Setup
-    player = new Player({ 9, 10 }, { 1000, 1000 }, sf::IntRect({ 0, 16 }, { 16, 16 }), Resources::textures["astronautAnimations.png"], {100, 100});
+    player = new Player({ 9, 10 }, { 960, 540 }, sf::IntRect({ 0, 16 }, { 16, 16 }), Resources::textures["astronautAnimations.png"], {100, 100});
     player->alignPlayerToHitBox();
 
 	jumpClock.reset();
@@ -124,6 +124,7 @@ void Update(float deltaTime, sf::RenderWindow *window)
 
 #pragma region Camera Movement
 
+    // Manual Camera Movement
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Scan::Right))
     {
         camera.position = sf::Vector2f({ camera.position.x + camera.moveSpeed * deltaTime, camera.position.y });
@@ -139,6 +140,17 @@ void Update(float deltaTime, sf::RenderWindow *window)
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Scan::Down))
     {
         camera.position = sf::Vector2f({ camera.position.x, camera.position.y + camera.moveSpeed * deltaTime });
+    }
+
+    // Automatic Camera Movement
+    if (camera.position.x < player->getPosition().x - 300)
+    {
+        camera.position = sf::Vector2f({ camera.position.x + camera.moveSpeed * deltaTime, camera.position.y });
+    }
+    else if (camera.position.x > player->getPosition().x + 300)
+    {
+        camera.position = sf::Vector2f({ camera.position.x - camera.moveSpeed * deltaTime, camera.position.y });
+
     }
 
 #pragma endregion

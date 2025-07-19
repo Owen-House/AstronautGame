@@ -21,7 +21,7 @@ int main()
     //window->setFramerateLimit(240);
 
     
-
+    // Inital Game Setup
     Begin(window);
 
     // Main/Game Loop
@@ -38,6 +38,7 @@ int main()
             // User is closing window
             if (event->is<sf::Event::Closed>())
                 window->close();
+            //User Released Key
             if (event->is<sf::Event::KeyReleased>())
             {
                 auto keyEvent = event->getIf<sf::Event::KeyReleased>();
@@ -48,13 +49,12 @@ int main()
 
         window->setView(camera.GetView(window->getSize()));
         
-
+        // Update Game Logic
         Update(deltaTime, window);
 
+        // Display to Window
         window->clear();
-
         Render(window, renderer);
-
         window->display();
     }
 
