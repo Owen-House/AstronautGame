@@ -20,7 +20,7 @@ int main()
     Renderer renderer(*window);
     //window->setFramerateLimit(240);
 
-    Camera camera;
+    
 
     Begin(window);
 
@@ -46,8 +46,8 @@ int main()
             }
         }
 
-        //window->setView(camera.GetView(window->getSize()));
-
+        window->setView(camera.GetView(window->getSize()));
+        
 
         Update(deltaTime, window);
 

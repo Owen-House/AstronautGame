@@ -5,6 +5,7 @@
 #include "Map.h"
 #include "Renderer.h"
 #include "Resources.h"
+#include "Camera.h"
 #include <filesystem>
 
 unsigned int SCREEN_WIDTH = 1920;
@@ -37,27 +38,7 @@ std::vector<sf::Sprite> moonSurfaces;
 
 //Map stuff
 Map map(54.0f);
-
-void endOfMovement(const sf::Event::KeyReleased* keyEvent, float deltaTime)
-{
-    // Change velocity based on key released
-    if (keyEvent->code == sf::Keyboard::Key::W && player->getVelocity().y > 0)
-    {
-        std::cout << "W";
-        player->isJumping = false;
-        player->setVelocity({ player->getVelocity().x, 0.f });
-    }
-    else if (keyEvent->code == sf::Keyboard::Key::A && player->getVelocity().x < 0)
-    {
-        std::cout << "A";
-        player->setVelocity({ 0.f, player->getVelocity().y});
-    }
-    else if (keyEvent->code == sf::Keyboard::Key::D && player->getVelocity().x > 0)
-    {
-        std::cout << "D";
-        player->setVelocity({ 0.f, player->getVelocity().y });
-    }
-}
+Camera camera(1080);
 
 void Begin(const sf::Window* window)
 {
@@ -85,6 +66,8 @@ void Begin(const sf::Window* window)
     sf::Image image;
     image.loadFromFile("resources/map.png");
     map.CreateFromImage(image);
+
+    camera.position = sf::Vector2f({ 960, 540 });
 }
 
 
@@ -138,6 +121,28 @@ void Update(float deltaTime, sf::RenderWindow *window)
     }
 
 #pragma endregion
+
+#pragma region Camera Movement
+
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Scan::Right))
+    {
+        camera.position = sf::Vector2f({ camera.position.x + camera.moveSpeed * deltaTime, camera.position.y });
+    }
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Scan::Left))
+    {
+        camera.position = sf::Vector2f({ camera.position.x - camera.moveSpeed * deltaTime, camera.position.y });
+    }
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Scan::Up))
+    {
+        camera.position = sf::Vector2f({ camera.position.x, camera.position.y - camera.moveSpeed * deltaTime });
+    }
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Scan::Down))
+    {
+        camera.position = sf::Vector2f({ camera.position.x, camera.position.y + camera.moveSpeed * deltaTime });
+    }
+
+#pragma endregion
+
 
 #pragma region Platform Collision
 
@@ -240,10 +245,10 @@ void Update(float deltaTime, sf::RenderWindow *window)
         player->setPosition({ 0, player->getPosition().y });
     }
     // Right Collision
-    if (player->getPosition().x > SCREEN_WIDTH - player->getSize().x)
+    /*if (player->getPosition().x > SCREEN_WIDTH - player->getSize().x)
     {
         player->setPosition({ SCREEN_WIDTH - player->getSize().x, player->getPosition().y });
-    }
+    }*/
     // Top Collision
     if (player->getPosition().y < 0)
     {
@@ -252,11 +257,6 @@ void Update(float deltaTime, sf::RenderWindow *window)
 
 #pragma endregion
 
-#pragma region Map
-
-    
-
-#pragma endregion
 
 }
 
@@ -270,6 +270,6 @@ void Render(sf::RenderWindow* window, Renderer& renderer)
         window->draw(i);
     }
 
-    player->drawHitBox(window);
+    //player->drawHitBox(window);
     player->Draw(renderer);
 }
