@@ -21,7 +21,7 @@ sf::FloatRect nextPos;
 
 // Gravity
 float playerSpeed = 800.0f;
-const float groundHeight = float(SCREEN_HEIGHT - 80);
+const float groundHeight = float(SCREEN_HEIGHT);
 const float gravitySpeed = 800;
 float maxJumpTime = 0.3f; // Seconds
 
@@ -33,11 +33,13 @@ sf::Clock animationClock;
 extern Player* player = nullptr;
 
 std::vector<sf::RectangleShape> platforms;
+std::vector<sf::RectangleShape> blocks;
 sf::RectangleShape platform;
 std::vector<sf::Sprite> moonSurfaces;
 
 //Map stuff
-Map map(54.0f);
+float map_cell_size = 54.f;
+Map map(map_cell_size);
 Camera camera(1080);
 
 void Begin(const sf::Window* window)
@@ -53,19 +55,34 @@ void Begin(const sf::Window* window)
     }
     
     // Player Setup
-    player = new Player({ 9, 10 }, { 960, 540 }, sf::IntRect({ 0, 16 }, { 16, 16 }), Resources::textures["astronautAnimations.png"], {100, 100});
+    sf::Vector2f hitBoxSize = { 9,10 };
+    sf::Vector2f playerPosition = { 80, 750 };
+    sf::IntRect textureRect = sf::IntRect({ 0, 16 }, { 16, 16 });
+    sf::Vector2f playerSize = { 100, 100 };
+    player = new Player(hitBoxSize, playerPosition, textureRect, Resources::textures["astronautAnimations.png"], playerSize);
     player->alignPlayerToHitBox();
 
 	jumpClock.reset();
 
     // Platforms
-    platform.setFillColor(sf::Color::Red);
-    platform.setSize(sf::Vector2f(gridSize, gridSize));
-    platform.setPosition(sf::Vector2f(SCREEN_WIDTH / 2.0f, SCREEN_HEIGHT / 2.0f));
+    //platform.setFillColor(sf::Color::Red);
+    //platform.setSize(sf::Vector2f(gridSize, gridSize));
+    //platform.setPosition(sf::Vector2f(SCREEN_WIDTH / 2.0f, SCREEN_HEIGHT / 2.0f));
 
     sf::Image image;
-    image.loadFromFile("resources/map.png");
-    map.CreateFromImage(image);
+    if (!image.loadFromFile("resources/map.png"))
+    {
+        std::cout << "Could not load resources/map.png" << std::endl;
+        std::abort();
+    }
+    map.CreateFromImage(image, blocks);
+
+    std::cout << blocks.size() << std::endl;
+
+    for (auto& block : blocks)
+    {
+        std::cout << "X: " << block.getPosition().x << " Y: " << block.getPosition().y << std::endl;
+    }
 
     camera.position = sf::Vector2f({ 960, 540 });
 }
@@ -160,12 +177,12 @@ void Update(float deltaTime, sf::RenderWindow *window)
 
 #pragma region Platform Collision
 
-    mousePosGrid.x = sf::Mouse::getPosition(*window).x / (int)gridSize;
-    mousePosGrid.y = sf::Mouse::getPosition(*window).y / (int)gridSize;
+    //mousePosGrid.x = sf::Mouse::getPosition(*window).x / (int)gridSize;
+    //mousePosGrid.y = sf::Mouse::getPosition(*window).y / (int)gridSize;
 
 
     // Add Platforms
-    if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Left))
+    /*if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Left))
     {
         bool exists = false;
         for (size_t i = 0; i < platforms.size() && !exists; i++)
@@ -182,12 +199,12 @@ void Update(float deltaTime, sf::RenderWindow *window)
             platform.setPosition({ mousePosGrid.x * gridSize, mousePosGrid.y * gridSize });
             platforms.push_back(platform);
         }
-    }
+    }*/
 
-    for (auto& platform : platforms)
+    for (auto& block : blocks)
     {
         sf::FloatRect playerBounds = player->getHitbox().getGlobalBounds();
-        sf::FloatRect platformBounds = platform.getGlobalBounds();
+        sf::FloatRect platformBounds = block.getGlobalBounds();
 
         nextPos = playerBounds;
         nextPos.position.x += player->getVelocity().x;

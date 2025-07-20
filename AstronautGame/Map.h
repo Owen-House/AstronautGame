@@ -11,10 +11,11 @@ public:
 	Map(float cell_size = 128.0f);
 	
 	void CreateCheckerboard(size_t width, size_t height);
-	void CreateFromImage(const sf::Image& image);
+	void CreateFromImage(const sf::Image& image, std::vector<sf::RectangleShape>& blocks);
 
 	void Draw(Renderer& renderer);
 
 	std::vector<std::vector<int>> grid;
 	float cellSize;
+	sf::RectangleShape block;
 };

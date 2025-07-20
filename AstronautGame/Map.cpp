@@ -4,6 +4,8 @@
 Map::Map(float cell_size)
 	:cellSize(cell_size), grid()
 {
+	block.setFillColor(sf::Color::Transparent);
+	block.setSize({ cellSize, cellSize });
 }
 
 void Map::CreateCheckerboard(size_t width, size_t height) 
@@ -22,7 +24,7 @@ void Map::CreateCheckerboard(size_t width, size_t height)
 
 }
 
-void Map::CreateFromImage(const sf::Image& image)
+void Map::CreateFromImage(const sf::Image& image, std::vector<sf::RectangleShape>& blocks)
 {
 	grid.clear();
 	grid = std::vector(image.getSize().x, std::vector(image.getSize().y, 0));
@@ -32,9 +34,11 @@ void Map::CreateFromImage(const sf::Image& image)
 		for (size_t y = 0; y < grid[x].size(); y++)
 		{
 			sf::Color color = image.getPixel({ x, y });
-			if (color == sf::Color::Black)
+			if (color != sf::Color::White)
 			{
 				grid[x][y] = 1;
+				block.setPosition({ cellSize * x , cellSize * y });
+				blocks.push_back(block);
 			}
 		}
 	}

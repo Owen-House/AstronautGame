@@ -12,6 +12,7 @@ Player::Player(sf::Vector2f hitBoxSize, sf::Vector2f position, sf::IntRect sprit
 	: position(position), size(size), spriteRect(spriteRect), texture(player_texture)
 {
 	//HitBox
+	hitBox.setPosition(position);
 	hitBox.setSize(hitBoxSize);
 	hitBox.setFillColor(sf::Color::Transparent);
 	hitBox.setOutlineColor(sf::Color::White);
