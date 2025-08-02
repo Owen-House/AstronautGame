@@ -4,7 +4,6 @@
 #include "Renderer.h"
 #include "Camera.h"
 
-void endOfMovement(const sf::Event::KeyReleased* keyEvent, float deltaTime);
 
 extern Camera camera;
 

@@ -34,7 +34,8 @@ sf::Clock animationClock;
 extern Player* player = nullptr;
 
 // Enemies
-Enemy* enemy = nullptr;
+std::vector<Enemy*> enemies;
+
 
 
 std::vector<sf::RectangleShape> platforms;
@@ -55,7 +56,11 @@ void Begin(const sf::Window* window)
         if (file.is_regular_file() && (file.path().extension() == ".png" ||
             file.path().extension() == ".jpeg"))
         {
-            Resources::textures[file.path().filename().string()].loadFromFile(file.path().string());
+            if (!Resources::textures[file.path().filename().string()].loadFromFile(file.path().string()))
+            {
+                std::cout << "Failed to load file: "<< file.path().filename().string() << std::endl;
+                abort();
+            }
         }
     }
     
@@ -67,8 +72,8 @@ void Begin(const sf::Window* window)
     player = new Player(hitBoxSize, playerPosition, textureRect, Resources::textures["astronautAnimations.png"], playerSize);
 
     // Enemies Setup
-    enemy = new Enemy(Resources::textures["Alien_Gun.png"], 10.f, 10.f, { 800, 800 }, {200, 200}, 10.f);
-
+    Enemy* enemy = new Enemy(hitBoxSize, Resources::textures["Alien.png"], 10.f, 10.f, { 800, 900 }, {100, 100}, 300.f);
+    enemies.push_back(enemy);
 
     player->alignPlayerToHitBox();
 
@@ -280,6 +285,11 @@ void Update(float deltaTime, sf::RenderWindow *window)
 
 #pragma region Enemies
 
+    for (Enemy* e : enemies)
+    {
+        e->move(deltaTime);
+        e->CheckCollision(blocks, deltaTime);
+    }
 
 #pragma endregion
 
@@ -320,6 +330,10 @@ void Render(sf::RenderWindow* window, Renderer& renderer)
     //player->drawHitBox(window);
     player->Draw(renderer);
 
-    enemy->Draw(renderer);
+    for (Enemy* e : enemies)
+    {
+        e->Draw(renderer);
+        e->showHitBox(window);
+    }
 
 }
