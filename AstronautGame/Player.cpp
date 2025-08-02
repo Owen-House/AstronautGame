@@ -112,7 +112,7 @@ void Player::runningAnimation(sf::Clock& animationClock) {
 
 void Player::idleAnimation(sf::Clock& animationClock)
 {
-	if (animationClock.getElapsedTime().asSeconds() > .5f)
+	if (animationClock.getElapsedTime().asSeconds() > .4f)
 	{
 		spriteRect.position.x = (spriteRect.position.x + 16) % 64;
 		spriteRect.position.y = 0;

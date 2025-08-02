@@ -6,6 +6,7 @@
 #include "Renderer.h"
 #include "Resources.h"
 #include "Camera.h"
+#include "Enemy.h"
 #include <filesystem>
 
 unsigned int SCREEN_WIDTH = 1920;
@@ -32,6 +33,10 @@ sf::Clock animationClock;
 // Player
 extern Player* player = nullptr;
 
+// Enemies
+Enemy* enemy = nullptr;
+
+
 std::vector<sf::RectangleShape> platforms;
 std::vector<sf::RectangleShape> blocks;
 sf::RectangleShape platform;
@@ -56,10 +61,15 @@ void Begin(const sf::Window* window)
     
     // Player Setup
     sf::Vector2f hitBoxSize = { 9,10 };
-    sf::Vector2f playerPosition = { 80, 750 };
+    sf::Vector2f playerPosition = { 80, 600 };
     sf::IntRect textureRect = sf::IntRect({ 0, 16 }, { 16, 16 });
     sf::Vector2f playerSize = { 100, 100 };
     player = new Player(hitBoxSize, playerPosition, textureRect, Resources::textures["astronautAnimations.png"], playerSize);
+
+    // Enemies Setup
+    enemy = new Enemy(Resources::textures["Alien_Gun.png"], 10.f, 10.f, { 800, 800 }, {200, 200}, 10.f);
+
+
     player->alignPlayerToHitBox();
 
 	jumpClock.reset();
@@ -268,6 +278,12 @@ void Update(float deltaTime, sf::RenderWindow *window)
     player->move(player->getVelocity());
     player->alignPlayerToHitBox();
 
+#pragma region Enemies
+
+
+#pragma endregion
+
+
 #pragma region Screen Collision
 
     // Left Collision
@@ -303,4 +319,7 @@ void Render(sf::RenderWindow* window, Renderer& renderer)
 
     //player->drawHitBox(window);
     player->Draw(renderer);
+
+    enemy->Draw(renderer);
+
 }
