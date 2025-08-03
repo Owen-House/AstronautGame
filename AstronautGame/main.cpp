@@ -14,6 +14,8 @@ int main()
     unsigned int SCREEN_WIDTH = 1920;
     unsigned int SCREEN_HEIGHT = 1080;
     sf::Clock frameClock;
+    sf::Clock frameRate;
+    int FPS = 0;
     
     //Open Window
     sf::RenderWindow* window = new sf::RenderWindow(sf::VideoMode({ SCREEN_WIDTH, SCREEN_HEIGHT }), "AstronautGame");
@@ -27,6 +29,7 @@ int main()
     // Main/Game Loop
     while (window->isOpen())
     {
+        FPS++;
         deltaTime = frameClock.restart().asSeconds(); // Time between frames
 
 
@@ -51,6 +54,13 @@ int main()
         
         // Update Game Logic
         Update(deltaTime, window);
+
+        if (frameRate.getElapsedTime().asSeconds() >= 1.0)
+        {
+            frameRate.restart();
+            std::cout << "FPS: " << FPS << std::endl;
+            FPS = 0;
+        }
 
         // Display to Window
         window->clear();

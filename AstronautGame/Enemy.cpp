@@ -62,6 +62,15 @@ void Enemy::CheckCollision(std::vector<sf::RectangleShape> blocks, float deltaTi
     }
 }
 
+bool Enemy::checkPlayerCollision(Player* player)
+{
+    if (player->getHitbox().getGlobalBounds().findIntersection(hitBox.getGlobalBounds()))
+    {
+        std::cout << "GAME OVER" << std::endl;
+        return true;
+    }
+}
+
 void Enemy::move(float deltaTime)
 {
     hitBox.move({ speed * deltaTime, 0});

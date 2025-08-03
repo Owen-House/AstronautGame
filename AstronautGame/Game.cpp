@@ -75,6 +75,8 @@ void Begin(const sf::Window* window)
     Enemy* enemy = new Enemy(hitBoxSize, Resources::textures["Alien.png"], 10.f, 10.f, { 800, 900 }, {100, 100}, 300.f);
     enemies.push_back(enemy);
 
+    
+
     player->alignPlayerToHitBox();
 
 	jumpClock.reset();
@@ -92,12 +94,7 @@ void Begin(const sf::Window* window)
     }
     map.CreateFromImage(image, blocks);
 
-    std::cout << blocks.size() << std::endl;
 
-    for (auto& block : blocks)
-    {
-        std::cout << "X: " << block.getPosition().x << " Y: " << block.getPosition().y << std::endl;
-    }
 
     camera.position = sf::Vector2f({ 960, 540 });
 }
@@ -189,7 +186,7 @@ void Update(float deltaTime, sf::RenderWindow *window)
 
 #pragma endregion
 
-
+    
 #pragma region Platform Collision
 
     //mousePosGrid.x = sf::Mouse::getPosition(*window).x / (int)gridSize;
@@ -279,6 +276,7 @@ void Update(float deltaTime, sf::RenderWindow *window)
 
 #pragma endregion
 
+    
     // Execute movement
     player->move(player->getVelocity());
     player->alignPlayerToHitBox();
@@ -289,6 +287,7 @@ void Update(float deltaTime, sf::RenderWindow *window)
     {
         e->move(deltaTime);
         e->CheckCollision(blocks, deltaTime);
+        e->checkPlayerCollision(player);
     }
 
 #pragma endregion
@@ -327,7 +326,7 @@ void Render(sf::RenderWindow* window, Renderer& renderer)
         window->draw(i);
     }
 
-    //player->drawHitBox(window);
+    player->drawHitBox(window);
     player->Draw(renderer);
 
     for (Enemy* e : enemies)
