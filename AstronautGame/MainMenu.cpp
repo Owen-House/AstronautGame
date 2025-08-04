@@ -39,8 +39,10 @@ MainMenu::~MainMenu()
 	}
 }
 
-void MainMenu::draw(sf::RenderWindow* window)
+void MainMenu::draw(sf::RenderWindow* window, Renderer& renderer)
 {
+	renderer.Draw(Resources::textures["stars.png"], { 0, 0 }, sf::Vector2f(window->getSize()),
+		sf::IntRect({ 0, 0 }, { int(Resources::textures["stars.png"].getSize().x), int(Resources::textures["stars.png"].getSize().y) }));
 	for (int i = 0; i < 3; i++)
 	{
 		window->draw(*menu[i]);

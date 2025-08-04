@@ -95,7 +95,7 @@ int main()
         else 
         {
             window->clear();
-            menu.draw(window);
+            menu.draw(window, renderer);
         }
         
         // FPS counter

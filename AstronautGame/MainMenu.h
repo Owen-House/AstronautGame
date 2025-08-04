@@ -2,6 +2,7 @@
 #include <SFML/Graphics.hpp>
 #include "Camera.h"
 #include "Resources.h"
+#include "Renderer.h"
 #include <vector>
 
 #define MAX_NUMBER_OF_ITEMS 3
@@ -14,7 +15,7 @@ public:
 	~MainMenu();
 
 
-	void draw(sf::RenderWindow* window);
+	void draw(sf::RenderWindow* window, Renderer& renderer);
 	void moveUp();
 	void moveDown();
 	const int getPressedItem() { return selectedItemIndex; }
