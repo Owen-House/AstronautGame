@@ -76,7 +76,7 @@ void Begin(const sf::Window* window)
     
     // Map Setup
     sf::Image image;
-    if (!image.loadFromFile("resources/map.png"))
+    if (!image.loadFromFile("resources/map2.png"))
     {
         std::cout << "Could not load resources/map.png" << std::endl;
         std::abort();

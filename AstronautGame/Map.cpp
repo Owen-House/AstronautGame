@@ -37,7 +37,7 @@ void Map::CreateFromImage(const sf::Image& image, std::vector<sf::RectangleShape
 			if (color == sf::Color::Black)
 			{
 				grid[x][y] = 1;
-				block.setPosition({ cellSize * x , cellSize * y });
+				block.setPosition({ cellSize * (x - 2) , cellSize * y });
 				blocks.push_back(block);
 			}
 			else if (color == sf::Color::Red)
@@ -60,7 +60,7 @@ void Map::Draw(Renderer& renderer)
 		{
 			if (cell)
 			{
-				renderer.Draw(Resources::textures["Tileset_13.png"], { cellSize * x , cellSize * y  },
+				renderer.Draw(Resources::textures["Tileset_13.png"], { cellSize * (x - 2) , cellSize * y  },
 					{ cellSize, cellSize }, sf::IntRect({ 1,1 }, { 14, 14 }));
 			}
 			y++;
