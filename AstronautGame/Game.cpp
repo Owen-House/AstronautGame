@@ -33,12 +33,13 @@ sf::FloatRect nextPos;
 // Enemies
 std::vector<Enemy*> enemies;
 
-//Map stuff
+// Map stuff
 std::vector<sf::RectangleShape> blocks;
 float map_cell_size = 54.f;
 Map map(map_cell_size);
 Camera camera(1080);
 
+// Menu
 bool inMenu = true;
 
 void resetGame()
@@ -46,12 +47,6 @@ void resetGame()
     player->setPosition(playerStartPosition);
     camera.position.x = 960;
     inMenu = true;
-}
-
-void openMenu(sf::RenderWindow* window)
-{
-   
-    
 }
 
 void Begin(const sf::Window* window)

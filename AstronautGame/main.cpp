@@ -27,7 +27,7 @@ int main()
     Begin(window);
 
     //Main Menu
-    MainMenu menu(float(window->getSize().x), float(window->getSize().y));
+    MainMenu menu(camera, window);
 
     // Main/Game Loop
     while (window->isOpen())
@@ -72,6 +72,11 @@ int main()
                         window->close();
                         break;
                     }
+                }
+                if (keyEvent->code == sf::Keyboard::Key::Escape)
+                {
+                    camera.position.x = 960;
+                    inMenu = true;
                 }
                 player->isJumping = false;
             }
