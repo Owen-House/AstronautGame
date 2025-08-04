@@ -67,6 +67,7 @@ bool Enemy::checkPlayerCollision(Player* player)
     if (player->getHitbox().getGlobalBounds().findIntersection(hitBox.getGlobalBounds()))
     {
         std::cout << "GAME OVER" << std::endl;
+        resetGame();
         return true;
     }
 }

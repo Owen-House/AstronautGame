@@ -11,5 +11,6 @@ void Begin(const sf::Window* window);
 void Update(float deltaTime, sf::RenderWindow* window);
 void Render(sf::RenderWindow* window, Renderer& renderer);
 
+void resetGame();
 
 extern Player* player;

@@ -11,7 +11,7 @@ public:
 	Map(float cell_size = 128.0f);
 	
 	void CreateCheckerboard(size_t width, size_t height);
-	void CreateFromImage(const sf::Image& image, std::vector<sf::RectangleShape>& blocks);
+	void CreateFromImage(const sf::Image& image, std::vector<sf::RectangleShape>& blocks, sf::Vector2f& playerStartPosition);
 
 	void Draw(Renderer& renderer);
 

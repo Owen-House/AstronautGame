@@ -15,10 +15,6 @@ unsigned int SCREEN_HEIGHT = 1080;
 float astronautScale = 6.f;
 float numGroundSurfaces = 2.0f;
 
-const float gridSize = 150.f;
-sf::Vector2f mousePosGrid;
-
-sf::FloatRect nextPos;
 
 // Gravity
 float playerSpeed = 800.0f;
@@ -32,18 +28,14 @@ sf::Clock animationClock;
 
 // Player
 extern Player* player = nullptr;
+sf::Vector2f playerStartPosition = { 80, 600 };
+sf::FloatRect nextPos;
 
 // Enemies
 std::vector<Enemy*> enemies;
 
-
-
-std::vector<sf::RectangleShape> platforms;
-std::vector<sf::RectangleShape> blocks;
-sf::RectangleShape platform;
-std::vector<sf::Sprite> moonSurfaces;
-
 //Map stuff
+std::vector<sf::RectangleShape> blocks;
 float map_cell_size = 54.f;
 Map map(map_cell_size);
 Camera camera(1080);
@@ -64,35 +56,35 @@ void Begin(const sf::Window* window)
         }
     }
     
-    // Player Setup
-    sf::Vector2f hitBoxSize = { 9,10 };
-    sf::Vector2f playerPosition = { 80, 600 };
-    sf::IntRect textureRect = sf::IntRect({ 0, 16 }, { 16, 16 });
-    sf::Vector2f playerSize = { 100, 100 };
-    player = new Player(hitBoxSize, playerPosition, textureRect, Resources::textures["astronautAnimations.png"], playerSize);
-
-    // Enemies Setup
-    Enemy* enemy = new Enemy(hitBoxSize, Resources::textures["Alien.png"], 10.f, 10.f, { 800, 900 }, {100, 100}, 300.f);
-    enemies.push_back(enemy);
-
-    
-
-    player->alignPlayerToHitBox();
-
-	jumpClock.reset();
-
-    // Platforms
-    //platform.setFillColor(sf::Color::Red);
-    //platform.setSize(sf::Vector2f(gridSize, gridSize));
-    //platform.setPosition(sf::Vector2f(SCREEN_WIDTH / 2.0f, SCREEN_HEIGHT / 2.0f));
-
+    // Map Setup
     sf::Image image;
     if (!image.loadFromFile("resources/map.png"))
     {
         std::cout << "Could not load resources/map.png" << std::endl;
         std::abort();
     }
-    map.CreateFromImage(image, blocks);
+    map.CreateFromImage(image, blocks, playerStartPosition);
+
+    // Player Setup
+    sf::Vector2f hitBoxSize = { 9,10 };
+    
+    sf::IntRect textureRect = sf::IntRect({ 0, 16 }, { 16, 16 });
+    sf::Vector2f playerSize = { 100, 100 };
+    player = new Player(hitBoxSize, playerStartPosition, textureRect, Resources::textures["astronautAnimations.png"], playerSize);
+
+    // Enemies Setup
+    Enemy* enemy = new Enemy(hitBoxSize, Resources::textures["Alien.png"], 10.f, 10.f, { 800, 900 }, {100, 100}, 300.f);
+    Enemy* enemy2 = new Enemy(hitBoxSize, Resources::textures["Alien.png"], 10.f, 10.f, { 3000, 900 }, { 100, 100 }, 300.f);
+
+    enemies.push_back(enemy);
+    enemies.push_back(enemy2);
+
+
+    player->alignPlayerToHitBox();
+
+	jumpClock.reset();
+
+    
 
 
 
@@ -153,24 +145,6 @@ void Update(float deltaTime, sf::RenderWindow *window)
 
 #pragma region Camera Movement
 
-    // Manual Camera Movement
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Scan::Right))
-    {
-        camera.position = sf::Vector2f({ camera.position.x + camera.moveSpeed * deltaTime, camera.position.y });
-    }
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Scan::Left))
-    {
-        camera.position = sf::Vector2f({ camera.position.x - camera.moveSpeed * deltaTime, camera.position.y });
-    }
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Scan::Up))
-    {
-        camera.position = sf::Vector2f({ camera.position.x, camera.position.y - camera.moveSpeed * deltaTime });
-    }
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Scan::Down))
-    {
-        camera.position = sf::Vector2f({ camera.position.x, camera.position.y + camera.moveSpeed * deltaTime });
-    }
-
     // Automatic Camera Movement
     if (camera.position.x > player->getPosition().x + 300 && camera.position.x > 960)
     {
@@ -189,30 +163,7 @@ void Update(float deltaTime, sf::RenderWindow *window)
     
 #pragma region Platform Collision
 
-    //mousePosGrid.x = sf::Mouse::getPosition(*window).x / (int)gridSize;
-    //mousePosGrid.y = sf::Mouse::getPosition(*window).y / (int)gridSize;
-
-
-    // Add Platforms
-    /*if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Left))
-    {
-        bool exists = false;
-        for (size_t i = 0; i < platforms.size() && !exists; i++)
-        {
-            if (platforms[i].getPosition().x / (int)gridSize == mousePosGrid.x
-                && platforms[i].getPosition().y / (int)gridSize == mousePosGrid.y)
-            {
-                exists = true;
-            }
-        }
-
-        if (!exists)
-        {
-            platform.setPosition({ mousePosGrid.x * gridSize, mousePosGrid.y * gridSize });
-            platforms.push_back(platform);
-        }
-    }*/
-
+    
     for (auto& block : blocks)
     {
         sf::FloatRect playerBounds = player->getHitbox().getGlobalBounds();
@@ -321,11 +272,6 @@ void Render(sf::RenderWindow* window, Renderer& renderer)
 {
     map.Draw(renderer);
 
-    for (auto& i : platforms)
-    {
-        window->draw(i);
-    }
-
     player->drawHitBox(window);
     player->Draw(renderer);
 
@@ -335,4 +281,10 @@ void Render(sf::RenderWindow* window, Renderer& renderer)
         e->showHitBox(window);
     }
 
+}
+
+void resetGame() 
+{
+    player->setPosition(playerStartPosition);
+    camera.position.x = 960;
 }
