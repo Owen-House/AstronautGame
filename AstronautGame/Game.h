@@ -12,5 +12,7 @@ void Update(float deltaTime, sf::RenderWindow* window);
 void Render(sf::RenderWindow* window, Renderer& renderer);
 
 void resetGame();
+void openMenu(sf::RenderWindow* window);
 
+extern bool inMenu;
 extern Player* player;

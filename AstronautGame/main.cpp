@@ -6,6 +6,7 @@
 #include "Renderer.h"
 #include "Resources.h"
 #include "Camera.h"
+#include "MainMenu.h"
 
 int main()
 {
@@ -22,9 +23,11 @@ int main()
     Renderer renderer(*window);
     //window->setFramerateLimit(240);
 
-    
     // Inital Game Setup
     Begin(window);
+
+    //Main Menu
+    MainMenu menu(float(window->getSize().x), float(window->getSize().y));
 
     // Main/Game Loop
     while (window->isOpen())
@@ -45,16 +48,52 @@ int main()
             if (event->is<sf::Event::KeyReleased>())
             {
                 auto keyEvent = event->getIf<sf::Event::KeyReleased>();
+                if (keyEvent->code == sf::Keyboard::Key::Up || keyEvent->code == sf::Keyboard::Key::W)
+                {
+                    menu.moveUp();
+                }
+                if (keyEvent->code == sf::Keyboard::Key::Down || keyEvent->code == sf::Keyboard::Key::S)
+                {
+                    menu.moveDown();
+                }
+                if (keyEvent->code == sf::Keyboard::Key::Enter || keyEvent->code == sf::Keyboard::Key::Space)
+                {
+                    switch (menu.getPressedItem())
+                    {
+                    case 0:
+                        std::cout << "Play Button Pressed!" << std::endl;
+                        inMenu = false;
+                        break;
+                    case 1:
+                        std::cout << "Option Button Pressed!" << std::endl;
+                        break;
+                    case 2:
+                        std::cout << "Exit Button Pressed!" << std::endl;
+                        window->close();
+                        break;
+                    }
+                }
                 player->isJumping = false;
-                //endOfMovement(keyEvent, deltaTime);
             }
         }
 
         window->setView(camera.GetView(window->getSize()));
         
-        // Update Game Logic
-        Update(deltaTime, window);
-
+        // Only start game when not in menu
+        if (!inMenu)
+        {
+            // Update Game Logic
+            Update(deltaTime, window);
+            window->clear();
+            Render(window, renderer);
+        } 
+        else 
+        {
+            window->clear();
+            menu.draw(window);
+        }
+        
+        // FPS counter
         if (frameRate.getElapsedTime().asSeconds() >= 1.0)
         {
             frameRate.restart();
@@ -62,9 +101,7 @@ int main()
             FPS = 0;
         }
 
-        // Display to Window
-        window->clear();
-        Render(window, renderer);
+        
         window->display();
     }
 

@@ -7,14 +7,13 @@
 #include "Resources.h"
 #include "Camera.h"
 #include "Enemy.h"
+#include "MainMenu.h"
 #include <filesystem>
 
 unsigned int SCREEN_WIDTH = 1920;
 unsigned int SCREEN_HEIGHT = 1080;
 
 float astronautScale = 6.f;
-float numGroundSurfaces = 2.0f;
-
 
 // Gravity
 float playerSpeed = 800.0f;
@@ -40,15 +39,25 @@ float map_cell_size = 54.f;
 Map map(map_cell_size);
 Camera camera(1080);
 
+bool inMenu = true;
+
 void resetGame()
 {
     player->setPosition(playerStartPosition);
     camera.position.x = 960;
+    inMenu = true;
+}
+
+void openMenu(sf::RenderWindow* window)
+{
+   
+    
 }
 
 void Begin(const sf::Window* window)
 {
-    // Load textures
+
+    // Load textures and fonts
     for (auto& file : std::filesystem::directory_iterator("./resources/textures"))
     {
         if (file.is_regular_file() && (file.path().extension() == ".png" ||
@@ -57,6 +66,14 @@ void Begin(const sf::Window* window)
             if (!Resources::textures[file.path().filename().string()].loadFromFile(file.path().string()))
             {
                 std::cout << "Failed to load file: "<< file.path().filename().string() << std::endl;
+                abort();
+            }
+        }
+        if (file.is_regular_file() && (file.path().extension() == ".ttf"))
+        {
+            if (!Resources::fonts[file.path().filename().string()].openFromFile(file.path().string()))
+            {
+                std::cout << "Failed to load file: " << file.path().filename().string() << std::endl;
                 abort();
             }
         }
@@ -89,10 +106,6 @@ void Begin(const sf::Window* window)
     player->alignPlayerToHitBox();
 
 	jumpClock.reset();
-
-    
-
-
 
     camera.position = sf::Vector2f({ 960, 540 });
 }
@@ -282,5 +295,6 @@ void Render(sf::RenderWindow* window, Renderer& renderer)
         //e->showHitBox(window);
     }
 
+    //menu.draw(window);
 }
 
