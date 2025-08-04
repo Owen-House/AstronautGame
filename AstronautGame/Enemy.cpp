@@ -16,7 +16,17 @@ Enemy::Enemy(sf::Vector2f hitBoxSize, sf::Texture texture, float health, float d
 
 void Enemy::Draw(Renderer& renderer)
 {
-	renderer.Draw(texture, position, size, animationRect);
+    if (isFacingLeft)
+    {
+        faceLeft();
+        renderer.Draw(texture, position, size, animationRect);
+    }
+    else
+    {
+        faceRight();
+        renderer.Draw(texture, position, { -size.x, size.y }, animationRect);
+    }
+	
 }
 
 void Enemy::CheckCollision(std::vector<sf::RectangleShape> blocks, float deltaTime)
@@ -43,6 +53,7 @@ void Enemy::CheckCollision(std::vector<sf::RectangleShape> blocks, float deltaTi
             {
                 speed = -speed;
                 position = { platformBounds.position.x - size.x, enemyBounds.position.y };
+                isFacingLeft = false;
                 alignToHitBox();
             }
 
@@ -54,6 +65,7 @@ void Enemy::CheckCollision(std::vector<sf::RectangleShape> blocks, float deltaTi
             {
                 speed = -speed;
                 position = { platformBounds.position.x + platformBounds.size.x ,enemyBounds.position.y };
+                isFacingLeft = true;
                 alignToHitBox();
             }
 
@@ -72,10 +84,21 @@ bool Enemy::checkPlayerCollision(Player* player)
     }
 }
 
+void Enemy::faceRight()
+{
+    offset = { -12, 6 };
+    alignToHitBox();
+}
+
+void Enemy::faceLeft()
+{
+    offset = { 3, 6 };
+    alignToHitBox();
+}
+
 void Enemy::move(float deltaTime)
 {
     hitBox.move({ speed * deltaTime, 0});
-    alignToHitBox();
 }
 
 void Enemy::alignToHitBox()

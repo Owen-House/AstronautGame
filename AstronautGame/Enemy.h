@@ -30,10 +30,15 @@ public:
 	{
 		window->draw(hitBox);
 	}
+
+	void faceLeft();
+	void faceRight();
 	
 private:
 	sf::Vector2f size;
 	
+	bool isFacingLeft = true;
+
 	//Hitbox
 	float scale = 6.f;
 	sf::Vector2f offset = { 3.f, 6.f };

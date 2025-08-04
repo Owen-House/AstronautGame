@@ -40,6 +40,12 @@ float map_cell_size = 54.f;
 Map map(map_cell_size);
 Camera camera(1080);
 
+void resetGame()
+{
+    player->setPosition(playerStartPosition);
+    camera.position.x = 960;
+}
+
 void Begin(const sf::Window* window)
 {
     // Load textures
@@ -251,11 +257,6 @@ void Update(float deltaTime, sf::RenderWindow *window)
     {
         player->setPosition({ 0, player->getPosition().y });
     }
-    // Right Collision
-    /*if (player->getPosition().x > SCREEN_WIDTH - player->getSize().x)
-    {
-        player->setPosition({ SCREEN_WIDTH - player->getSize().x, player->getPosition().y });
-    }*/
     // Top Collision
     if (player->getPosition().y < 0)
     {
@@ -272,19 +273,14 @@ void Render(sf::RenderWindow* window, Renderer& renderer)
 {
     map.Draw(renderer);
 
-    player->drawHitBox(window);
+    //player->drawHitBox(window);
     player->Draw(renderer);
 
     for (Enemy* e : enemies)
     {
         e->Draw(renderer);
-        e->showHitBox(window);
+        //e->showHitBox(window);
     }
 
 }
 
-void resetGame() 
-{
-    player->setPosition(playerStartPosition);
-    camera.position.x = 960;
-}
