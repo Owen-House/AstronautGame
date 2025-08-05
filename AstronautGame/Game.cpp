@@ -7,7 +7,6 @@
 #include "Resources.h"
 #include "Camera.h"
 #include "Enemy.h"
-#include "MainMenu.h"
 #include <filesystem>
 
 unsigned int SCREEN_WIDTH = 1920;
@@ -19,7 +18,7 @@ float astronautScale = 6.f;
 float playerSpeed = 800.0f;
 const float groundHeight = float(SCREEN_HEIGHT);
 const float gravitySpeed = 800;
-float maxJumpTime = 0.3f; // Seconds
+ // Seconds
 
 // Clocks
 sf::Clock jumpClock;
@@ -108,54 +107,7 @@ void Begin(const sf::Window* window)
 
 void Update(float deltaTime, sf::RenderWindow *window)
 {
-#pragma region Preparing Movement 
-
-    bool moving = false;
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Scan::W) && jumpClock.getElapsedTime().asSeconds() < maxJumpTime) // Jump
-    {
-        player->getVelocity().y = -playerSpeed * deltaTime;
-        player->isJumping = true;
-        player->jumpingAnimation(animationClock);
-        if (!jumpClock.isRunning())
-        {
-            jumpClock.restart();
-        }
-        moving = true;
-    }
-    else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Scan::W) && jumpClock.getElapsedTime().asSeconds() >= maxJumpTime)
-    {
-        player->isJumping = false;
-    }
-
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Scan::D)) // Move Right
-    {
-        player->getVelocity().x = playerSpeed * deltaTime;
-        //player->unflipSprite();
-        player->runningAnimation(animationClock);
-        moving = true;
-    }
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Scan::A)) // Move Left
-    {
-        player->getVelocity().x = -playerSpeed * deltaTime;
-        //player->flipSprite();
-        player->runningAnimation(animationClock);
-        moving = true;
-    }
-    if (!moving) {
-        player->idleAnimation(animationClock);
-    }
-
-    // Gravity
-    if (player->getPosition().y < groundHeight - player->getSize().y && !player->isJumping)
-    {
-        player->getVelocity().y += gravitySpeed * deltaTime;
-    }
-    else if (!player->isJumping)
-    {
-        jumpClock.reset();
-    }
-
-#pragma endregion
+    player->gatherMovementInputs(deltaTime, jumpClock, animationClock);
 
 #pragma region Camera Movement
 

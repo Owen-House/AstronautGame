@@ -1,7 +1,7 @@
-#include "MainMenu.h"
+#include "Menu.h"
 
 
-MainMenu::MainMenu(Camera camera, sf::RenderWindow* window)
+Menu::Menu(Camera camera, sf::RenderWindow* window)
 {
 	sf::View cameraView = camera.GetView(window->getSize());
 	font = Resources::fonts["ThaleahFat.ttf"];
@@ -17,7 +17,7 @@ MainMenu::MainMenu(Camera camera, sf::RenderWindow* window)
 	menu[0]->setPosition({ cameraView.getCenter().x, float(window->getSize().y) / (MAX_NUMBER_OF_ITEMS + 1) * 1});
 
 	menu[1]->setFillColor(sf::Color::White);
-	menu[1]->setString("Options");
+	menu[1]->setString("Levels");
 	bounds = menu[1]->getLocalBounds();
 	menu[1]->setOrigin({ bounds.size.x / 2, bounds.size.y / 2 });
 	menu[1]->setPosition({ cameraView.getCenter().x, float(window->getSize().y) / (MAX_NUMBER_OF_ITEMS + 1) * 2 });
@@ -31,7 +31,7 @@ MainMenu::MainMenu(Camera camera, sf::RenderWindow* window)
 	selectedItemIndex = 0;
 }
 
-MainMenu::~MainMenu()
+Menu::~Menu()
 {
 	for (int i = 0; i < MAX_NUMBER_OF_ITEMS; i++)
 	{
@@ -39,7 +39,7 @@ MainMenu::~MainMenu()
 	}
 }
 
-void MainMenu::draw(sf::RenderWindow* window, Renderer& renderer)
+void Menu::draw(sf::RenderWindow* window, Renderer& renderer)
 {
 	renderer.Draw(Resources::textures["stars.png"], { 0, 0 }, sf::Vector2f(window->getSize()),
 		sf::IntRect({ 0, 0 }, { int(Resources::textures["stars.png"].getSize().x), int(Resources::textures["stars.png"].getSize().y) }));
@@ -48,7 +48,7 @@ void MainMenu::draw(sf::RenderWindow* window, Renderer& renderer)
 		window->draw(*menu[i]);
 	}
 }
-void MainMenu::moveUp()
+void Menu::moveUp()
 {
 	if (selectedItemIndex - 1 >= 0)
 	{
@@ -58,7 +58,7 @@ void MainMenu::moveUp()
 	}
 }
 
-void MainMenu::moveDown()
+void Menu::moveDown()
 {
 	if (selectedItemIndex + 1 < MAX_NUMBER_OF_ITEMS)
 	{

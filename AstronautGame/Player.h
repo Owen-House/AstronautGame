@@ -13,6 +13,7 @@ public:
 
 	void drawHitBox(sf::RenderWindow* window);
 
+	void gatherMovementInputs(float deltaTime, sf::Clock& jumpClock, sf::Clock& animationClock);
 	void move(sf::Vector2f distance);
 	void setPosition(sf::Vector2f newPos);
 
@@ -41,5 +42,7 @@ private:
 	sf::Vector2f offset = { 3.f, 6.f };
 	sf::Vector2f position;
 	sf::Vector2f size;
+	float maxJumpTime = 0.3f;
+	float speed = 800.0f;
 	bool facingLeft = false;
 };

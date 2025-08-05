@@ -7,12 +7,12 @@
 
 #define MAX_NUMBER_OF_ITEMS 3
 
-class MainMenu
+class Menu
 {
 
 public:
-	MainMenu(Camera camera, sf::RenderWindow* window);
-	~MainMenu();
+	Menu(Camera camera, sf::RenderWindow* window);
+	~Menu();
 
 
 	void draw(sf::RenderWindow* window, Renderer& renderer);

@@ -46,6 +46,52 @@ void Player::Draw(Renderer& renderer)
 	}
 }
 
+void Player::gatherMovementInputs(float deltaTime, sf::Clock& jumpClock, sf::Clock& animationClock)
+{
+	bool moving = false;
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Scan::W) && jumpClock.getElapsedTime().asSeconds() < maxJumpTime) // Jump
+	{
+		velocity.y = -speed * deltaTime;
+		isJumping = true;
+		jumpingAnimation(animationClock);
+		if (!jumpClock.isRunning())
+		{
+			jumpClock.restart();
+		}
+		moving = true;
+	}
+	else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Scan::W) && jumpClock.getElapsedTime().asSeconds() >= maxJumpTime) // End jump after maxJumpTime
+	{
+		isJumping = false;
+	}
+
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Scan::D)) // Move Right
+	{
+		velocity.x = speed * deltaTime;
+		runningAnimation(animationClock);
+		moving = true;
+	}
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Scan::A)) // Move Left
+	{
+		velocity.x = -speed * deltaTime;
+		runningAnimation(animationClock);
+		moving = true;
+	}
+	if (!moving) {
+		idleAnimation(animationClock);
+	}
+
+	// Gravity
+	if (position.y < 1080 - size.y && !isJumping)
+	{
+		velocity.y += 800 * deltaTime;
+	}
+	else if (!isJumping)
+	{
+		jumpClock.reset();
+	}
+}
+
 void Player::move(sf::Vector2f distance)
 {
 	hitBox.move(distance);

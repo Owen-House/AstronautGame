@@ -6,7 +6,7 @@
 #include "Renderer.h"
 #include "Resources.h"
 #include "Camera.h"
-#include "MainMenu.h"
+#include "Menu.h"
 
 int main()
 {
@@ -27,7 +27,7 @@ int main()
     Begin(window);
 
     //Main Menu
-    MainMenu menu(camera, window);
+    Menu menu(camera, window);
 
     // Main/Game Loop
     while (window->isOpen())
@@ -65,7 +65,7 @@ int main()
                         inMenu = false;
                         break;
                     case 1:
-                        std::cout << "Option Button Pressed!" << std::endl;
+                        std::cout << "Levels Button Pressed!" << std::endl;
                         break;
                     case 2:
                         std::cout << "Exit Button Pressed!" << std::endl;
