@@ -16,3 +16,17 @@ sf::View Camera::GetView(sf::Vector2u windowSize)
 
 	return sf::View(position, size);
 }
+
+void Camera::moveWithPlayer(Player* player)
+{
+	if (position.x > player->getPosition().x + 300 && position.x > 960)
+	{
+		// Move Camera Left
+		position.x -= std::abs(player->getVelocity().x);
+	}
+	if ((position.x < player->getPosition().x - 300))
+	{
+		// Move Camera Right
+		position.x += std::abs(player->getVelocity().x);
+	}
+}

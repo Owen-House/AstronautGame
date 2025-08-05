@@ -109,22 +109,7 @@ void Update(float deltaTime, sf::RenderWindow *window)
 {
     player->gatherMovementInputs(deltaTime, jumpClock, animationClock);
 
-#pragma region Camera Movement
-
-    // Automatic Camera Movement
-    if (camera.position.x > player->getPosition().x + 300 && camera.position.x > 960)
-    {
-        // Move Camera Left
-        camera.position.x -= camera.moveSpeed * deltaTime;
-    }
-    if ((camera.position.x < player->getPosition().x - 300))
-    {
-        // Move Camera Right
-        camera.position.x += camera.moveSpeed * deltaTime;
-    }
-    
-
-#pragma endregion
+    camera.moveWithPlayer(player);
 
     
 #pragma region Platform Collision
