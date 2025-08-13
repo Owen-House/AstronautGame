@@ -20,6 +20,8 @@ Player::Player(sf::Vector2f hitBoxSize, sf::Vector2f position, sf::IntRect sprit
 	hitBox.setScale(sf::Vector2f({ size.x / spriteRect.size.x, size.y / spriteRect.size.y }));
 	
 	scale = size.x / spriteRect.size.x;
+
+	jumpClock.reset();
 }
 
 void Player::alignPlayerToHitBox()
@@ -46,7 +48,7 @@ void Player::Draw(Renderer& renderer)
 	}
 }
 
-void Player::gatherMovementInputs(float deltaTime, sf::Clock& jumpClock, sf::Clock& animationClock)
+void Player::gatherMovementInputs(float deltaTime, sf::Clock& animationClock)
 {
 	bool moving = false;
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Scan::W) && jumpClock.getElapsedTime().asSeconds() < maxJumpTime) // Jump
@@ -173,5 +175,74 @@ void Player::jumpingAnimation(sf::Clock& animationClock)
 		spriteRect.position.x = (spriteRect.position.x + 16) % 144;
 		spriteRect.position.y = 32;
 		animationClock.restart();
+	}
+}
+
+void Player::checkCollision(std::vector<std::vector<sf::RectangleShape>>& blocks)
+{
+	sf::FloatRect nextPos;
+
+	for (unsigned int i = 0; i < blocks.size(); i++)
+	{
+		for (auto& block : blocks[i])
+		{
+			sf::FloatRect playerBounds = hitBox.getGlobalBounds();
+			sf::FloatRect platformBounds = block.getGlobalBounds();
+
+			nextPos = playerBounds;
+			nextPos.position.x += velocity.x;
+			nextPos.position.y += getVelocity().y;
+
+
+
+			if (platformBounds.findIntersection(nextPos))
+			{
+
+				// Platform Top Collision
+				if (playerBounds.position.y < platformBounds.position.y
+					&& playerBounds.position.y + playerBounds.size.y < platformBounds.position.y + platformBounds.size.y
+					&& playerBounds.position.x < platformBounds.position.x + platformBounds.size.x
+					&& playerBounds.position.x + playerBounds.size.x > platformBounds.position.x)
+				{
+					getVelocity().y = 0.f;
+					setPosition({ playerBounds.position.x, platformBounds.position.y - playerBounds.size.y });
+					jumpClock.restart();
+					isJumping = false;
+				}
+
+				// Platform Bottom Collision
+				else if (playerBounds.position.y > platformBounds.position.y
+					&& playerBounds.position.y + playerBounds.size.y > platformBounds.position.y + platformBounds.size.y
+					&& playerBounds.position.x < platformBounds.position.x + platformBounds.size.x
+					&& playerBounds.position.x + playerBounds.size.x > platformBounds.position.x)
+				{
+					velocity.y = 0.f;
+					setPosition({ playerBounds.position.x , platformBounds.position.y + platformBounds.size.y });
+				}
+
+
+				// Platform Left Collision
+				if (playerBounds.position.x < platformBounds.position.x
+					&& playerBounds.position.x + playerBounds.size.x < platformBounds.position.x + platformBounds.size.x
+					&& playerBounds.position.y < platformBounds.position.y + platformBounds.size.y
+					&& playerBounds.position.y + playerBounds.size.y > platformBounds.position.y)
+				{
+					velocity.x = 0.f;
+					setPosition({ platformBounds.position.x - getSize().x, playerBounds.position.y });
+				}
+
+				// Platform Right Collision
+				else if (playerBounds.position.x > platformBounds.position.x
+					&& playerBounds.position.x + playerBounds.size.x > platformBounds.position.x + platformBounds.size.x
+					&& playerBounds.position.y < platformBounds.position.y + platformBounds.size.y
+					&& playerBounds.position.y + playerBounds.size.y > platformBounds.position.y)
+				{
+					velocity.x = 0.f;
+					setPosition({ platformBounds.position.x + platformBounds.size.x ,playerBounds.position.y });
+				}
+
+
+			}
+		}
 	}
 }

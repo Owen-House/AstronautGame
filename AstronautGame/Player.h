@@ -14,20 +14,20 @@ public:
 
 	void drawHitBox(sf::RenderWindow* window);
 
-	void gatherMovementInputs(float deltaTime, sf::Clock& jumpClock, sf::Clock& animationClock);
+	void gatherMovementInputs(float deltaTime, sf::Clock& animationClock);
 	void move(sf::Vector2f distance);
 	void setPosition(sf::Vector2f newPos);
+	void setVelocity(sf::Vector2f newVelocity);
+	void checkCollision(std::vector<std::vector<sf::RectangleShape>>& blocks);
 
 	sf::Vector2f getPosition();
 	sf::Vector2f getSize();
 	sf::Vector2f& getVelocity();
 
-	void setVelocity(sf::Vector2f newVelocity);
 
 	void flipSprite();
 	void unflipSprite();
 
-	// Animation
 	void runningAnimation(sf::Clock& animationClock);
 	void idleAnimation(sf::Clock& animationClock);
 	void jumpingAnimation(sf::Clock& animationClock);
@@ -45,5 +45,6 @@ private:
 	sf::Vector2f size;
 	float maxJumpTime = 0.3f;
 	float speed = 800.0f;
+	sf::Clock jumpClock;
 	bool facingLeft = false;
 };

@@ -21,13 +21,12 @@ const float gravitySpeed = 800;
  // Seconds
 
 // Clocks
-sf::Clock jumpClock;
+
 sf::Clock animationClock;
 
 // Player
 extern Player* player = nullptr;
 sf::Vector2f playerStartPosition = { 80, 600 };
-sf::FloatRect nextPos;
 
 // Enemies
 std::vector<Enemy*> enemies;
@@ -120,7 +119,6 @@ void Begin(const sf::Window* window)
 
     player->alignPlayerToHitBox();
 
-	jumpClock.reset();
 
     camera.position = sf::Vector2f({ 960, 540 });
 }
@@ -132,76 +130,14 @@ void Update(float deltaTime, sf::RenderWindow *window)
     {
         return changeLevel();
     }
-    player->gatherMovementInputs(deltaTime, jumpClock, animationClock);
+    player->gatherMovementInputs(deltaTime, animationClock);
 
     camera.moveWithPlayer(player, map, window->getSize());
 
     
 #pragma region Player Collision
 
-    for (unsigned int i = 0; i < blocks.size(); i++)
-    {
-        for (auto& block : blocks[i])
-        {
-            sf::FloatRect playerBounds = player->getHitbox().getGlobalBounds();
-            sf::FloatRect platformBounds = block.getGlobalBounds();
-
-            nextPos = playerBounds;
-            nextPos.position.x += player->getVelocity().x;
-            nextPos.position.y += player->getVelocity().y;
-
-
-
-            if (platformBounds.findIntersection(nextPos))
-            {
-
-                // Platform Top Collision
-                if (playerBounds.position.y < platformBounds.position.y
-                    && playerBounds.position.y + playerBounds.size.y < platformBounds.position.y + platformBounds.size.y
-                    && playerBounds.position.x < platformBounds.position.x + platformBounds.size.x
-                    && playerBounds.position.x + playerBounds.size.x > platformBounds.position.x)
-                {
-                    player->getVelocity().y = 0.f;
-                    player->setPosition({ playerBounds.position.x, platformBounds.position.y - playerBounds.size.y });
-                    jumpClock.restart();
-                    player->isJumping = false;
-                }
-
-                // Platform Bottom Collision
-                else if (playerBounds.position.y > platformBounds.position.y
-                    && playerBounds.position.y + playerBounds.size.y > platformBounds.position.y + platformBounds.size.y
-                    && playerBounds.position.x < platformBounds.position.x + platformBounds.size.x
-                    && playerBounds.position.x + playerBounds.size.x > platformBounds.position.x)
-                {
-                    player->getVelocity().y = 0.f;
-                    player->setPosition({ playerBounds.position.x , platformBounds.position.y + platformBounds.size.y });
-                }
-
-
-                // Platform Left Collision
-                if (playerBounds.position.x < platformBounds.position.x
-                    && playerBounds.position.x + playerBounds.size.x < platformBounds.position.x + platformBounds.size.x
-                    && playerBounds.position.y < platformBounds.position.y + platformBounds.size.y
-                    && playerBounds.position.y + playerBounds.size.y > platformBounds.position.y)
-                {
-                    player->getVelocity().x = 0.f;
-                    player->setPosition({ platformBounds.position.x - player->getSize().x, playerBounds.position.y });
-                }
-
-                // Platform Right Collision
-                else if (playerBounds.position.x > platformBounds.position.x
-                    && playerBounds.position.x + playerBounds.size.x > platformBounds.position.x + platformBounds.size.x
-                    && playerBounds.position.y < platformBounds.position.y + platformBounds.size.y
-                    && playerBounds.position.y + playerBounds.size.y > platformBounds.position.y)
-                {
-                    player->getVelocity().x = 0.f;
-                    player->setPosition({ platformBounds.position.x + platformBounds.size.x ,playerBounds.position.y });
-                }
-
-
-            }
-        }
-    }
+    player->checkCollision(blocks);
 
     for (auto& door : doors)
     {
