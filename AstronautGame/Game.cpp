@@ -80,7 +80,7 @@ void Begin(const sf::Window* window)
         std::cout << "Could not load resources/map.png" << std::endl;
         std::abort();
     }
-    map.CreateFromImage(image, blocks, playerStartPosition);
+    map.CreateFromImage(image, blocks, playerStartPosition, enemies);
 
     // Player Setup
     sf::Vector2f hitBoxSize = { 9,10 };
@@ -88,14 +88,6 @@ void Begin(const sf::Window* window)
     sf::IntRect textureRect = sf::IntRect({ 0, 16 }, { 16, 16 });
     sf::Vector2f playerSize = { 100, 100 };
     player = new Player(hitBoxSize, playerStartPosition, textureRect, Resources::textures["astronautAnimations.png"], playerSize);
-
-    // Enemies Setup
-    Enemy* enemy = new Enemy(hitBoxSize, Resources::textures["Alien.png"], 10.f, 10.f, { 800, 900 }, {100, 100}, 300.f);
-    Enemy* enemy2 = new Enemy(hitBoxSize, Resources::textures["Alien.png"], 10.f, 10.f, { 3000, 900 }, { 100, 100 }, 300.f);
-
-    enemies.push_back(enemy);
-    enemies.push_back(enemy2);
-
 
     player->alignPlayerToHitBox();
 

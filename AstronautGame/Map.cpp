@@ -24,7 +24,7 @@ void Map::CreateCheckerboard(size_t width, size_t height)
 
 }
 
-void Map::CreateFromImage(const sf::Image& image, std::vector<sf::RectangleShape>& blocks, sf::Vector2f& playerStartPosition)
+void Map::CreateFromImage(const sf::Image& image, std::vector<sf::RectangleShape>& blocks, sf::Vector2f& playerStartPosition, std::vector<Enemy*>& enemies)
 {
 	grid.clear();
 	grid = std::vector(image.getSize().x, std::vector(image.getSize().y, 0));
@@ -42,9 +42,14 @@ void Map::CreateFromImage(const sf::Image& image, std::vector<sf::RectangleShape
 			}
 			else if (color == sf::Color::Red)
 			{
-				playerStartPosition = { cellSize * x, cellSize * y };
+				playerStartPosition = { cellSize * (x - 2), cellSize * y };
 			}
-
+			else if (color == sf::Color::Blue)
+			{
+				sf::Vector2f hitBoxSize = { 9,10 };
+				Enemy* enemy = new Enemy(hitBoxSize, Resources::textures["Alien.png"], 10.f, 10.f, { cellSize * (x - 2), cellSize * y - 10 }, { 100, 100 }, 300.f);
+				enemies.push_back(enemy);
+			}
 		}
 	}
 }
