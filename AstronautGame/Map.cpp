@@ -24,9 +24,20 @@ void Map::CreateCheckerboard(size_t width, size_t height)
 
 }
 
-void Map::CreateFromImage(const sf::Image& image, std::vector<sf::RectangleShape>& blocks, sf::Vector2f& playerStartPosition, std::vector<Enemy*>& enemies)
+void Map::resetMap(std::vector<sf::RectangleShape>& blocks, std::vector<Enemy*>& enemies)
 {
 	grid.clear();
+	blocks.clear();
+	for (Enemy* e : enemies)
+	{
+		delete e;
+	}
+	enemies.clear();
+}
+
+void Map::CreateFromImage(const sf::Image& image, std::vector<sf::RectangleShape>& blocks, sf::Vector2f& playerStartPosition, std::vector<Enemy*>& enemies)
+{
+	resetMap(blocks, enemies);
 	grid = std::vector(image.getSize().x, std::vector(image.getSize().y, 0));
 
 	for (size_t x = 0; x < grid.size(); x++)

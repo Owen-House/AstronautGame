@@ -16,6 +16,8 @@ public:
 
 	void Draw(Renderer& renderer);
 
+	void resetMap(std::vector<sf::RectangleShape>& blocks, std::vector<Enemy*>& enemies);
+
 	std::vector<std::vector<int>> grid;
 	float cellSize;
 	sf::RectangleShape block;

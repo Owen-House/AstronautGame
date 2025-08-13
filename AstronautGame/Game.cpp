@@ -48,6 +48,12 @@ void resetGame()
     inMenu = true;
 }
 
+void loadLevel(int level)
+{
+    std::string levelName = "level" + std::to_string(level) + ".png";
+    map.CreateFromImage(Resources::levels[levelName], blocks, playerStartPosition, enemies);
+}
+
 void Begin(const sf::Window* window)
 {
 
@@ -73,14 +79,21 @@ void Begin(const sf::Window* window)
         }
     }
     
-    // Map Setup
+    // Load Levels
     sf::Image image;
-    if (!image.loadFromFile("resources/map2.png"))
+    for (auto& file : std::filesystem::directory_iterator("./resources/levels"))
     {
-        std::cout << "Could not load resources/map.png" << std::endl;
-        std::abort();
+        if (file.is_regular_file() && (file.path().extension() == ".png" ||
+            file.path().extension() == ".jpeg"))
+        {
+            if (!Resources::levels[file.path().filename().string()].loadFromFile(file.path().string()))
+            {
+                std::cout << "Failed to load file: " << file.path().filename().string() << std::endl;
+                abort();
+            }
+        }
     }
-    map.CreateFromImage(image, blocks, playerStartPosition, enemies);
+    loadLevel(1);
 
     // Player Setup
     sf::Vector2f hitBoxSize = { 9,10 };

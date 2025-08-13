@@ -7,5 +7,6 @@ class Resources
 public:
 	static std::unordered_map<std::string, sf::Texture> textures;
 	static std::unordered_map<std::string, sf::Font> fonts;
+	static std::unordered_map<std::string, sf::Image> levels;
 };
 

@@ -59,6 +59,7 @@ void Menu::draw(sf::RenderWindow* window, Renderer& renderer)
 		window->draw(*menu[i]);
 	}
 }
+
 void Menu::moveUp()
 {
 	if (selectedItemIndex - 1 >= 0)
