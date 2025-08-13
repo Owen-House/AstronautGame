@@ -43,8 +43,15 @@ int main()
         {
             // User is closing window
             if (event->is<sf::Event::Closed>())
+            {
                 window->close();
-            //User Released Key
+            }
+            // Window is not focused
+            if (event->is<sf::Event::FocusLost>() || event->is<sf::Event::Resized>())
+            {
+                inMenu = true;
+            }
+            // User Released Key
             if (event->is<sf::Event::KeyReleased>())
             {
                 auto keyEvent = event->getIf<sf::Event::KeyReleased>();
