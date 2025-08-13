@@ -12,7 +12,9 @@ void Update(float deltaTime, sf::RenderWindow* window);
 void Render(sf::RenderWindow* window, Renderer& renderer);
 
 void resetGame();
+void changeLevel();
 
 extern bool inMenu;
 extern Player* player;
 extern int currentLevel;
+extern bool changeLevels;

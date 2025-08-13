@@ -76,6 +76,8 @@ int main()
                         break;
                     case 2:
                         std::cout << "Level Button Pressed!" << std::endl;
+                        changeLevel();
+                        menu.updateLevel(camera, window, currentLevel);
                         break;
                     case 3:
                         std::cout << "Quit Button Pressed!" << std::endl;

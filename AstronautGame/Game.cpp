@@ -61,7 +61,14 @@ void resetGame()
     inMenu = true;
 }
 
-
+void changeLevel()
+{
+    currentLevel = currentLevel % maxLevels + 1;
+    loadLevel(currentLevel);
+    resetGame();
+    changeLevels = false;
+    return;
+}
 
 void Begin(const sf::Window* window)
 {
@@ -123,11 +130,7 @@ void Update(float deltaTime, sf::RenderWindow *window)
 {
     if (changeLevels)
     {
-        currentLevel = currentLevel % maxLevels + 1;
-        loadLevel(currentLevel);
-        resetGame();
-        changeLevels = false;
-        return;
+        return changeLevel();
     }
     player->gatherMovementInputs(deltaTime, jumpClock, animationClock);
 

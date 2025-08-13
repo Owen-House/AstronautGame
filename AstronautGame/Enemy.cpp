@@ -29,7 +29,7 @@ void Enemy::Draw(Renderer& renderer)
 	
 }
 
-void Enemy::CheckCollision(std::vector< std::vector<sf::RectangleShape>> blocks, float deltaTime)
+void Enemy::CheckCollision(const std::vector< std::vector<sf::RectangleShape>>& blocks, float deltaTime)
 {
     sf::FloatRect nextPos;
     for (auto& block : blocks[yGridPos])

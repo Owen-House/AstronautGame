@@ -20,7 +20,7 @@ public:
 		sf::Vector2f position, sf::Vector2f size, int yGridPos, float speed = 0.f);
 
 	void Draw(Renderer& renderer);
-	void CheckCollision(std::vector< std::vector<sf::RectangleShape>> blocks, float deltaTime);
+	void CheckCollision(const std::vector< std::vector<sf::RectangleShape>>& blocks, float deltaTime);
 	void move(float deltaTime);
 	bool checkPlayerCollision(Player* player);
 
