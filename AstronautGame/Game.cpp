@@ -134,7 +134,7 @@ void Update(float deltaTime, sf::RenderWindow *window)
     }
     player->gatherMovementInputs(deltaTime, jumpClock, animationClock);
 
-    camera.moveWithPlayer(player);
+    camera.moveWithPlayer(player, map, window->getSize());
 
     
 #pragma region Player Collision
@@ -219,7 +219,6 @@ void Update(float deltaTime, sf::RenderWindow *window)
     player->move(player->getVelocity());
     player->alignPlayerToHitBox();
 
-#pragma region Enemies
 
     for (Enemy* e : enemies)
     {
@@ -228,7 +227,6 @@ void Update(float deltaTime, sf::RenderWindow *window)
         e->checkPlayerCollision(player);
     }
 
-#pragma endregion
 }
 
 

@@ -1,4 +1,5 @@
 #include "Camera.h"
+#include "Map.h"
 
 Camera::Camera(float zoomLevel)
 	: zoomLevel(zoomLevel)
@@ -17,16 +18,27 @@ sf::View Camera::GetView(sf::Vector2u windowSize)
 	return sf::View(position, size);
 }
 
-void Camera::moveWithPlayer(Player* player)
+void Camera::moveWithPlayer(Player* player, Map& map, sf::Vector2u windowSize)
 {
-	if (position.x > player->getPosition().x + 300 && position.x > 960)
+	sf::View cameraView = GetView(windowSize);
+
+	if (position.x > player->getPosition().x + 300 && position.x > (cameraView.getSize().x / 2))
 	{
 		// Move Camera Left
 		position.x -= std::abs(player->getVelocity().x);
 	}
-	if ((position.x < player->getPosition().x - 300) && position.x < 3895)
+	else if (position.x <= (cameraView.getSize().x / 2))
+	{
+		position.x = (cameraView.getSize().x / 2);
+	}
+	if ((position.x < player->getPosition().x - 300) && position.x < (map.grid.size()) * 54 - (cameraView.getSize().x / 2) - 2)
 	{
 		// Move Camera Right
 		position.x += std::abs(player->getVelocity().x);
 	}
+	else if (position.x >= (map.grid.size()) * 54 - (cameraView.getSize().x / 2) - 2)
+	{
+		position.x = (map.grid.size()) * 54 - (cameraView.getSize().x / 2) - 2;
+	}
+
 }

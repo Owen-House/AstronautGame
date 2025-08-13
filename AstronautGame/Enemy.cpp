@@ -3,8 +3,8 @@
 sf::IntRect animationRect = sf::IntRect({0, 0}, {16, 16});
 
 
-Enemy::Enemy(sf::Vector2f hitBoxSize, sf::Texture texture, float health, float damage, sf::Vector2f position, sf::Vector2f size, int yGridPos, float speed)
-	: texture(texture), health(health), damage(damage), position(position), size(size), yGridPos(yGridPos), speed(speed)
+Enemy::Enemy(sf::Vector2f hitBoxSize, sf::Texture texture, sf::Vector2f position, sf::Vector2f size, int yGridPos, float speed)
+	: texture(texture), position(position), size(size), yGridPos(yGridPos), speed(speed)
 {
     hitBox.setPosition(position);
     hitBox.setSize(hitBoxSize);

@@ -56,27 +56,26 @@ void Map::CreateFromImage(const sf::Image& image, std::vector< std::vector<sf::R
 			if (color == sf::Color::Black) // Blocks
 			{
 				grid[x][y] = 1;
-				block.setPosition({ cellSize * (x - 1) , cellSize * y });
+				block.setPosition({ cellSize * x , cellSize * y });
 				blocks[y].push_back(block);
 			}
 			else if (color == sf::Color::Red) // Player
 			{
-				playerStartPosition = { cellSize * (x - 1), cellSize * y - 10 };
+				playerStartPosition = { cellSize * x, cellSize * y - 10 };
 			}
 			else if (color == sf::Color::Blue) // Enemies
 			{
 				sf::Vector2f hitBoxSize = { 9,10 };
-				Enemy* enemy = new Enemy(hitBoxSize, Resources::textures["Alien.png"], 10.f, 10.f, { cellSize * (x - 1), cellSize * y - 10 }, { 100, 100 }, y, 300.f);
+				Enemy* enemy = new Enemy(hitBoxSize, Resources::textures["Alien.png"], { cellSize * x, cellSize * y - 10 }, { 100, 100 }, y, 300.f);
 				enemies.push_back(enemy);
 			}
 			else if (color == sf::Color::Yellow) // Doors
 			{
 				grid[x][y] = 2;
-				block.setPosition({cellSize * (x - 1) , cellSize * y});
+				block.setPosition({cellSize * x , cellSize * y});
 				doors.push_back(block);
 			}
 		}
-		std::cout << x << std::endl;
 	}
 }
 
@@ -92,11 +91,11 @@ void Map::Draw(Renderer& renderer)
 			switch (cell)
 			{
 			case 1:
-				renderer.Draw(Resources::textures["Block.png"], { cellSize * (x - 1) , cellSize * y },
+				renderer.Draw(Resources::textures["Block.png"], { cellSize * x , cellSize * y },
 					{ cellSize, cellSize }, sf::IntRect({ 1,1 }, { 14, 14 }));
 				break;
 			case 2:
-				renderer.Draw(Resources::textures["Door.png"], { cellSize * (x - 1) , cellSize * y },
+				renderer.Draw(Resources::textures["Door.png"], { cellSize * x , cellSize * y },
 					{ cellSize, cellSize }, sf::IntRect({ 1,1 }, { 14, 14 }));
 				break;
 			}

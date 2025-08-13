@@ -17,7 +17,7 @@ Menu::Menu(Camera camera, sf::RenderWindow* window)
 	// MENU ITEMS
 	menu[0]->setString("Astronaut");
 	menu[1]->setString("Play");
-	menu[2]->setString("Current Level: ");
+	menu[2]->setString("Level: ");
 	menu[3]->setString("Quit");
 
 	menu[0]->setFillColor(sf::Color::Black);
@@ -90,7 +90,7 @@ void Menu::updatePosition(Camera camera, sf::RenderWindow* window)
 
 void Menu::updateLevel(Camera camera, sf::RenderWindow* window, int currLevel)
 {
-	menu[2]->setString("Current Level: " + std::to_string(currLevel));
+	menu[2]->setString("Level: " + std::to_string(currLevel));
 	sf::FloatRect bounds = menu[2]->getLocalBounds();
 	menu[2]->setOrigin({ bounds.size.x / 2, bounds.size.y / 2 });
 }

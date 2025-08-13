@@ -8,16 +8,12 @@
 class Enemy
 {
 public:
-	float health;
-	float damage;
 	sf::Vector2f position;
 	float speed;
-	sf::Texture texture;
 	sf::RectangleShape hitBox;
 	int yGridPos;
 
-	Enemy(sf::Vector2f hitBoxSize, sf::Texture texture, float health, float damage,
-		sf::Vector2f position, sf::Vector2f size, int yGridPos, float speed = 0.f);
+	Enemy(sf::Vector2f hitBoxSize, sf::Texture texture, sf::Vector2f position, sf::Vector2f size, int yGridPos, float speed = 0.f);
 
 	void Draw(Renderer& renderer);
 	void CheckCollision(const std::vector< std::vector<sf::RectangleShape>>& blocks, float deltaTime);
@@ -32,6 +28,7 @@ public:
 private:
 	sf::Vector2f size;
 	bool isFacingLeft = true;
+	sf::Texture texture;
 
 	//Hitbox
 	float scale = 6.f;
