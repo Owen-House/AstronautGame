@@ -75,10 +75,10 @@ int main()
                         inMenu = false;
                         break;
                     case 2:
-                        std::cout << "Levels Button Pressed!" << std::endl;
+                        std::cout << "Level Button Pressed!" << std::endl;
                         break;
                     case 3:
-                        std::cout << "Exit Button Pressed!" << std::endl;
+                        std::cout << "Quit Button Pressed!" << std::endl;
                         window->close();
                         break;
                     }

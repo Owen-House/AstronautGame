@@ -14,29 +14,23 @@ public:
 	float speed;
 	sf::Texture texture;
 	sf::RectangleShape hitBox;
+	int yGridPos;
 
+	Enemy(sf::Vector2f hitBoxSize, sf::Texture texture, float health, float damage,
+		sf::Vector2f position, sf::Vector2f size, int yGridPos, float speed = 0.f);
 
-	Enemy(sf::Vector2f hitBoxSize, sf::Texture texture, float health, float damage, sf::Vector2f position, sf::Vector2f size, float speed = 0.f);
-	
 	void Draw(Renderer& renderer);
-	
-	void CheckCollision(std::vector<sf::RectangleShape> blocks, float deltaTime);
-
+	void CheckCollision(std::vector< std::vector<sf::RectangleShape>> blocks, float deltaTime);
 	void move(float deltaTime);
-
 	bool checkPlayerCollision(Player* player);
 
-	void showHitBox(sf::RenderWindow* window)
-	{
-		window->draw(hitBox);
-	}
+	void showHitBox(sf::RenderWindow* window){ window->draw(hitBox); }
 
 	void faceLeft();
 	void faceRight();
 	
 private:
 	sf::Vector2f size;
-	
 	bool isFacingLeft = true;
 
 	//Hitbox

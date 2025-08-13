@@ -14,19 +14,19 @@ Menu::Menu(Camera camera, sf::RenderWindow* window)
 		menu[i]->setOutlineThickness(2);
 	}
 
+	// MENU ITEMS
 	menu[0]->setString("Astronaut");
+	menu[1]->setString("Play");
+	menu[2]->setString("Current Level: ");
+	menu[3]->setString("Quit");
+
 	menu[0]->setFillColor(sf::Color::Black);
 	menu[0]->setOutlineColor(sf::Color::White);
 	menu[0]->setOutlineThickness(4);
 	menu[0]->setCharacterSize(300);
 
 	menu[1]->setFillColor(selectedColor);
-	menu[1]->setString("Play");
-
-	menu[2]->setString("Current Level: ");
-
-	menu[3]->setString("Quit");
-
+	
 	for (int i = 0; i < MAX_NUMBER_OF_ITEMS; i++)
 	{
 		bounds = menu[i]->getLocalBounds();
@@ -93,5 +93,4 @@ void Menu::updateLevel(Camera camera, sf::RenderWindow* window, int currLevel)
 	menu[2]->setString("Current Level: " + std::to_string(currLevel));
 	sf::FloatRect bounds = menu[2]->getLocalBounds();
 	menu[2]->setOrigin({ bounds.size.x / 2, bounds.size.y / 2 });
-	menu[2]->setPosition({ xPosition, float(window->getSize().y) / (MAX_NUMBER_OF_ITEMS + 1) * 3 });
 }

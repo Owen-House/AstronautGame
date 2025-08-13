@@ -33,7 +33,7 @@ sf::FloatRect nextPos;
 std::vector<Enemy*> enemies;
 
 // Map stuff
-std::vector<sf::RectangleShape> blocks;
+std::vector<std::vector<sf::RectangleShape>> blocks;
 std::vector<sf::RectangleShape> doors;
 float map_cell_size = 54;
 Map map(map_cell_size);
@@ -136,65 +136,67 @@ void Update(float deltaTime, sf::RenderWindow *window)
     
 #pragma region Player Collision
 
-    
-    for (auto& block : blocks)
+    for (unsigned int i = 0; i < blocks.size(); i++)
     {
-        sf::FloatRect playerBounds = player->getHitbox().getGlobalBounds();
-        sf::FloatRect platformBounds = block.getGlobalBounds();
-
-        nextPos = playerBounds;
-        nextPos.position.x += player->getVelocity().x;
-        nextPos.position.y += player->getVelocity().y;
-
-
-
-        if (platformBounds.findIntersection(nextPos))
+        for (auto& block : blocks[i])
         {
+            sf::FloatRect playerBounds = player->getHitbox().getGlobalBounds();
+            sf::FloatRect platformBounds = block.getGlobalBounds();
 
-            // Platform Top Collision
-            if (playerBounds.position.y < platformBounds.position.y
-                && playerBounds.position.y + playerBounds.size.y < platformBounds.position.y + platformBounds.size.y
-                && playerBounds.position.x < platformBounds.position.x + platformBounds.size.x
-                && playerBounds.position.x + playerBounds.size.x > platformBounds.position.x)
+            nextPos = playerBounds;
+            nextPos.position.x += player->getVelocity().x;
+            nextPos.position.y += player->getVelocity().y;
+
+
+
+            if (platformBounds.findIntersection(nextPos))
             {
-                player->getVelocity().y = 0.f;
-                player->setPosition({ playerBounds.position.x, platformBounds.position.y - playerBounds.size.y });
-                jumpClock.restart();
-                player->isJumping = false;
+
+                // Platform Top Collision
+                if (playerBounds.position.y < platformBounds.position.y
+                    && playerBounds.position.y + playerBounds.size.y < platformBounds.position.y + platformBounds.size.y
+                    && playerBounds.position.x < platformBounds.position.x + platformBounds.size.x
+                    && playerBounds.position.x + playerBounds.size.x > platformBounds.position.x)
+                {
+                    player->getVelocity().y = 0.f;
+                    player->setPosition({ playerBounds.position.x, platformBounds.position.y - playerBounds.size.y });
+                    jumpClock.restart();
+                    player->isJumping = false;
+                }
+
+                // Platform Bottom Collision
+                else if (playerBounds.position.y > platformBounds.position.y
+                    && playerBounds.position.y + playerBounds.size.y > platformBounds.position.y + platformBounds.size.y
+                    && playerBounds.position.x < platformBounds.position.x + platformBounds.size.x
+                    && playerBounds.position.x + playerBounds.size.x > platformBounds.position.x)
+                {
+                    player->getVelocity().y = 0.f;
+                    player->setPosition({ playerBounds.position.x , platformBounds.position.y + platformBounds.size.y });
+                }
+
+
+                // Platform Left Collision
+                if (playerBounds.position.x < platformBounds.position.x
+                    && playerBounds.position.x + playerBounds.size.x < platformBounds.position.x + platformBounds.size.x
+                    && playerBounds.position.y < platformBounds.position.y + platformBounds.size.y
+                    && playerBounds.position.y + playerBounds.size.y > platformBounds.position.y)
+                {
+                    player->getVelocity().x = 0.f;
+                    player->setPosition({ platformBounds.position.x - player->getSize().x, playerBounds.position.y });
+                }
+
+                // Platform Right Collision
+                else if (playerBounds.position.x > platformBounds.position.x
+                    && playerBounds.position.x + playerBounds.size.x > platformBounds.position.x + platformBounds.size.x
+                    && playerBounds.position.y < platformBounds.position.y + platformBounds.size.y
+                    && playerBounds.position.y + playerBounds.size.y > platformBounds.position.y)
+                {
+                    player->getVelocity().x = 0.f;
+                    player->setPosition({ platformBounds.position.x + platformBounds.size.x ,playerBounds.position.y });
+                }
+
+
             }
-
-            // Platform Bottom Collision
-            else if (playerBounds.position.y > platformBounds.position.y
-                && playerBounds.position.y + playerBounds.size.y > platformBounds.position.y + platformBounds.size.y
-                && playerBounds.position.x < platformBounds.position.x + platformBounds.size.x
-                && playerBounds.position.x + playerBounds.size.x > platformBounds.position.x)
-            {
-                player->getVelocity().y = 0.f;
-                player->setPosition({ playerBounds.position.x , platformBounds.position.y + platformBounds.size.y });
-            }
-
-
-            // Platform Left Collision
-            if (playerBounds.position.x < platformBounds.position.x
-                && playerBounds.position.x + playerBounds.size.x < platformBounds.position.x + platformBounds.size.x
-                && playerBounds.position.y < platformBounds.position.y + platformBounds.size.y
-                && playerBounds.position.y + playerBounds.size.y > platformBounds.position.y)
-            {
-                player->getVelocity().x = 0.f;
-                player->setPosition({ platformBounds.position.x - player->getSize().x, playerBounds.position.y });
-            }
-
-            // Platform Right Collision
-            else if (playerBounds.position.x > platformBounds.position.x
-                && playerBounds.position.x + playerBounds.size.x > platformBounds.position.x + platformBounds.size.x
-                && playerBounds.position.y < platformBounds.position.y + platformBounds.size.y
-                && playerBounds.position.y + playerBounds.size.y > platformBounds.position.y)
-            {
-                player->getVelocity().x = 0.f;
-                player->setPosition({ platformBounds.position.x + platformBounds.size.x ,playerBounds.position.y });
-            }
-
-
         }
     }
 

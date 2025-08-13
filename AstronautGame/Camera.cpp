@@ -24,7 +24,7 @@ void Camera::moveWithPlayer(Player* player)
 		// Move Camera Left
 		position.x -= std::abs(player->getVelocity().x);
 	}
-	if ((position.x < player->getPosition().x - 300))
+	if ((position.x < player->getPosition().x - 300) && position.x < 3895)
 	{
 		// Move Camera Right
 		position.x += std::abs(player->getVelocity().x);

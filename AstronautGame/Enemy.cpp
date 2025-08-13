@@ -3,8 +3,8 @@
 sf::IntRect animationRect = sf::IntRect({0, 0}, {16, 16});
 
 
-Enemy::Enemy(sf::Vector2f hitBoxSize, sf::Texture texture, float health, float damage, sf::Vector2f position, sf::Vector2f size, float speed)
-	: texture(texture), health(health), damage(damage), position(position), speed(speed), size(size)
+Enemy::Enemy(sf::Vector2f hitBoxSize, sf::Texture texture, float health, float damage, sf::Vector2f position, sf::Vector2f size, int yGridPos, float speed)
+	: texture(texture), health(health), damage(damage), position(position), size(size), yGridPos(yGridPos), speed(speed)
 {
     hitBox.setPosition(position);
     hitBox.setSize(hitBoxSize);
@@ -29,11 +29,10 @@ void Enemy::Draw(Renderer& renderer)
 	
 }
 
-void Enemy::CheckCollision(std::vector<sf::RectangleShape> blocks, float deltaTime)
+void Enemy::CheckCollision(std::vector< std::vector<sf::RectangleShape>> blocks, float deltaTime)
 {
     sf::FloatRect nextPos;
-
-    for (auto& block : blocks)
+    for (auto& block : blocks[yGridPos])
     {
         sf::FloatRect enemyBounds = hitBox.getGlobalBounds();
         sf::FloatRect platformBounds = block.getGlobalBounds();
@@ -82,6 +81,7 @@ bool Enemy::checkPlayerCollision(Player* player)
         resetGame();
         return true;
     }
+    return false;
 }
 
 void Enemy::faceRight()
