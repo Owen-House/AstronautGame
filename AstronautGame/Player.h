@@ -6,6 +6,7 @@
 class Player {
 public:
 	bool isJumping = false;
+	float maxSpeed = 800.f;
 	Player(sf::Vector2f hitBoxSize, sf::Vector2f position, sf::IntRect textureRect, sf::Texture& player_Texture, sf::Vector2f size);
 	// Hitbox
 	void alignPlayerToHitBox();

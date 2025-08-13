@@ -112,7 +112,7 @@ void Update(float deltaTime, sf::RenderWindow *window)
     camera.moveWithPlayer(player);
 
     
-#pragma region Platform Collision
+#pragma region Player Collision
 
     
     for (auto& block : blocks)
@@ -193,24 +193,6 @@ void Update(float deltaTime, sf::RenderWindow *window)
     }
 
 #pragma endregion
-
-
-#pragma region Screen Collision
-
-    // Left Collision
-    if (player->getPosition().x < 0)
-    {
-        player->setPosition({ 0, player->getPosition().y });
-    }
-    // Top Collision
-    if (player->getPosition().y < 0)
-    {
-        player->setPosition({ player->getPosition().x, 0 });
-    }
-
-#pragma endregion
-
-
 }
 
 

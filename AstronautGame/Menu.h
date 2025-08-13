@@ -19,8 +19,10 @@ public:
 	void moveUp();
 	void moveDown();
 	const int getPressedItem() { return selectedItemIndex; }
+	void updatePosition(Camera camera, sf::RenderWindow* window);
 
 private:
+	float xPosition;
 	int selectedItemIndex;
 	sf::Font font;
 	sf::Text* menu[MAX_NUMBER_OF_ITEMS];

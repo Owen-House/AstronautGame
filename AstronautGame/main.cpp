@@ -75,7 +75,6 @@ int main()
                 }
                 if (keyEvent->code == sf::Keyboard::Key::Escape)
                 {
-                    camera.position.x = 960;
                     inMenu = true;
                 }
                 player->isJumping = false;
@@ -94,6 +93,7 @@ int main()
         } 
         else 
         {
+            menu.updatePosition(camera, window);
             window->clear();
             menu.draw(window, renderer);
         }
