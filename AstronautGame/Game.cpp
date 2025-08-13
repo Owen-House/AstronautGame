@@ -34,6 +34,7 @@ std::vector<Enemy*> enemies;
 
 // Map stuff
 std::vector<sf::RectangleShape> blocks;
+std::vector<sf::RectangleShape> doors;
 float map_cell_size = 54;
 Map map(map_cell_size);
 Camera camera(1080);
@@ -41,18 +42,26 @@ Camera camera(1080);
 // Menu
 bool inMenu = true;
 
+// Levels
+int currentLevel = 1;
+int maxLevels = 2;
+bool changeLevels = false;
+void loadLevel(int level)
+{
+    std::string levelName = "level" + std::to_string(level) + ".png";
+    map.CreateFromImage(Resources::levels[levelName], blocks, playerStartPosition, enemies, doors);
+}
+
 void resetGame()
 {
+    map.resetMap(blocks, enemies, doors);
+    loadLevel(currentLevel);
     player->setPosition(playerStartPosition);
     camera.position.x = 960;
     inMenu = true;
 }
 
-void loadLevel(int level)
-{
-    std::string levelName = "level" + std::to_string(level) + ".png";
-    map.CreateFromImage(Resources::levels[levelName], blocks, playerStartPosition, enemies);
-}
+
 
 void Begin(const sf::Window* window)
 {
@@ -93,7 +102,7 @@ void Begin(const sf::Window* window)
             }
         }
     }
-    loadLevel(1);
+    loadLevel(currentLevel);
 
     // Player Setup
     sf::Vector2f hitBoxSize = { 9,10 };
@@ -112,6 +121,14 @@ void Begin(const sf::Window* window)
 
 void Update(float deltaTime, sf::RenderWindow *window)
 {
+    if (changeLevels)
+    {
+        currentLevel = currentLevel % maxLevels + 1;
+        loadLevel(currentLevel);
+        resetGame();
+        changeLevels = false;
+        return;
+    }
     player->gatherMovementInputs(deltaTime, jumpClock, animationClock);
 
     camera.moveWithPlayer(player);
@@ -178,6 +195,15 @@ void Update(float deltaTime, sf::RenderWindow *window)
             }
 
 
+        }
+    }
+
+    for (auto& door : doors)
+    {
+        if (player->getHitbox().getGlobalBounds().findIntersection(door.getGlobalBounds()))
+        {
+            std::cout << "Level Complete!" << std::endl;
+            changeLevels = true;
         }
     }
 

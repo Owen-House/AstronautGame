@@ -12,11 +12,12 @@ public:
 	Map(float cell_size = 128.0f);
 	
 	void CreateCheckerboard(size_t width, size_t height);
-	void CreateFromImage(const sf::Image& image, std::vector<sf::RectangleShape>& blocks, sf::Vector2f& playerStartPosition, std::vector<Enemy*>& enemies);
+	void CreateFromImage(const sf::Image& image, std::vector<sf::RectangleShape>& blocks,
+		sf::Vector2f& playerStartPosition, std::vector<Enemy*>& enemies, std::vector<sf::RectangleShape>& doors);
 
 	void Draw(Renderer& renderer);
 
-	void resetMap(std::vector<sf::RectangleShape>& blocks, std::vector<Enemy*>& enemies);
+	void resetMap(std::vector<sf::RectangleShape>& blocks, std::vector<Enemy*>& enemies, std::vector<sf::RectangleShape>& doors);
 
 	std::vector<std::vector<int>> grid;
 	float cellSize;
