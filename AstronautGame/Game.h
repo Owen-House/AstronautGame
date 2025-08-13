@@ -15,3 +15,4 @@ void resetGame();
 
 extern bool inMenu;
 extern Player* player;
+extern int currentLevel;

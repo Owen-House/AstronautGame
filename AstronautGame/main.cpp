@@ -68,13 +68,16 @@ int main()
                     switch (menu.getPressedItem())
                     {
                     case 0:
+                        // Title
+                        break;
+                    case 1:
                         std::cout << "Play Button Pressed!" << std::endl;
                         inMenu = false;
                         break;
-                    case 1:
+                    case 2:
                         std::cout << "Levels Button Pressed!" << std::endl;
                         break;
-                    case 2:
+                    case 3:
                         std::cout << "Exit Button Pressed!" << std::endl;
                         window->close();
                         break;
@@ -101,6 +104,7 @@ int main()
         else 
         {
             menu.updatePosition(camera, window);
+            menu.updateLevel(camera, window, currentLevel);
             window->clear();
             menu.draw(window, renderer);
         }
