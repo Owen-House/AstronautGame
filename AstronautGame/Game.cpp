@@ -34,7 +34,7 @@ std::vector<Enemy*> enemies;
 
 // Map stuff
 std::vector<sf::RectangleShape> blocks;
-float map_cell_size = 54.f;
+float map_cell_size = 54;
 Map map(map_cell_size);
 Camera camera(1080);
 

@@ -42,7 +42,7 @@ void Map::CreateFromImage(const sf::Image& image, std::vector<sf::RectangleShape
 			}
 			else if (color == sf::Color::Red)
 			{
-				playerStartPosition = { cellSize * (x - 2), cellSize * y };
+				playerStartPosition = { cellSize * (x - 2), cellSize * y - 10 };
 			}
 			else if (color == sf::Color::Blue)
 			{
