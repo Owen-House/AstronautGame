@@ -3,10 +3,6 @@
 #include "Player.h"
 #include "Renderer.h"
 
-//Player::Player()
-//{
-//
-//}
 
 Player::Player(sf::Vector2f hitBoxSize, sf::Vector2f position, sf::IntRect spriteRect, sf::Texture &player_texture, sf::Vector2f size)
 	: position(position), size(size), spriteRect(spriteRect), texture(player_texture)
@@ -22,6 +18,7 @@ Player::Player(sf::Vector2f hitBoxSize, sf::Vector2f position, sf::IntRect sprit
 	scale = size.x / spriteRect.size.x;
 
 	jumpClock.reset();
+	alignPlayerToHitBox();
 }
 
 void Player::alignPlayerToHitBox()
@@ -51,20 +48,24 @@ void Player::Draw(Renderer& renderer)
 void Player::gatherMovementInputs(float deltaTime, sf::Clock& animationClock)
 {
 	bool moving = false;
+	
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Scan::W) && jumpClock.getElapsedTime().asSeconds() < maxJumpTime) // Jump
 	{
-		velocity.y = -speed * deltaTime;
-		isJumping = true;
-		jumpingAnimation(animationClock);
-		if (!jumpClock.isRunning())
+		if (isJumping || onGround)
 		{
-			jumpClock.restart();
-		}
-		moving = true;
+			onGround = false;
+			velocity.y = -speed * deltaTime;
+			isJumping = true;
+			jumpingAnimation(animationClock);
+			moving = true;
+			if (!jumpClock.isRunning())
+				jumpClock.restart();
+		}	
 	}
 	else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Scan::W) && jumpClock.getElapsedTime().asSeconds() >= maxJumpTime) // End jump after maxJumpTime
 	{
 		isJumping = false;
+
 	}
 
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Scan::D)) // Move Right
@@ -79,14 +80,13 @@ void Player::gatherMovementInputs(float deltaTime, sf::Clock& animationClock)
 		runningAnimation(animationClock);
 		moving = true;
 	}
-	if (!moving) {
+	if (!moving)
 		idleAnimation(animationClock);
-	}
 
 	// Gravity
 	if (position.y < 1080 - size.y && !isJumping)
 	{
-		velocity.y += 800 * deltaTime;
+		velocity.y += speed * deltaTime;
 	}
 	else if (!isJumping)
 	{
@@ -105,6 +105,7 @@ void Player::move(sf::Vector2f distance)
 	{
 		facingLeft = false;
 	}
+	alignPlayerToHitBox();
 }
 
 void Player::setPosition(sf::Vector2f newPos)
@@ -182,6 +183,8 @@ void Player::checkCollision(std::vector<std::vector<sf::RectangleShape>>& blocks
 {
 	sf::FloatRect nextPos;
 
+	bool tempGroundCheck = false;
+
 	for (unsigned int i = 0; i < blocks.size(); i++)
 	{
 		for (auto& block : blocks[i])
@@ -208,6 +211,7 @@ void Player::checkCollision(std::vector<std::vector<sf::RectangleShape>>& blocks
 					setPosition({ playerBounds.position.x, platformBounds.position.y - playerBounds.size.y });
 					jumpClock.restart();
 					isJumping = false;
+					tempGroundCheck = true;
 				}
 
 				// Platform Bottom Collision
@@ -219,6 +223,7 @@ void Player::checkCollision(std::vector<std::vector<sf::RectangleShape>>& blocks
 					velocity.y = 0.f;
 					setPosition({ playerBounds.position.x , platformBounds.position.y + platformBounds.size.y });
 				}
+				
 
 
 				// Platform Left Collision
@@ -245,4 +250,6 @@ void Player::checkCollision(std::vector<std::vector<sf::RectangleShape>>& blocks
 			}
 		}
 	}
+
+	onGround = tempGroundCheck;
 }

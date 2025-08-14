@@ -112,13 +112,9 @@ void Begin(const sf::Window* window)
 
     // Player Setup
     sf::Vector2f hitBoxSize = { 9,10 };
-    
     sf::IntRect textureRect = sf::IntRect({ 0, 16 }, { 16, 16 });
     sf::Vector2f playerSize = { 100, 100 };
     player = new Player(hitBoxSize, playerStartPosition, textureRect, Resources::textures["astronautAnimations.png"], playerSize);
-
-    player->alignPlayerToHitBox();
-
 
     camera.position = sf::Vector2f({ 960, 540 });
 }
@@ -127,17 +123,12 @@ void Begin(const sf::Window* window)
 void Update(float deltaTime, sf::RenderWindow *window)
 {
     if (changeLevels)
-    {
         return changeLevel();
-    }
+
     player->gatherMovementInputs(deltaTime, animationClock);
+    player->checkCollision(blocks);
 
     camera.moveWithPlayer(player, map, window->getSize());
-
-    
-#pragma region Player Collision
-
-    player->checkCollision(blocks);
 
     for (auto& door : doors)
     {
@@ -147,14 +138,9 @@ void Update(float deltaTime, sf::RenderWindow *window)
             changeLevels = true;
         }
     }
-
-#pragma endregion
-
     
     // Execute movement
     player->move(player->getVelocity());
-    player->alignPlayerToHitBox();
-
 
     for (Enemy* e : enemies)
     {
@@ -162,7 +148,6 @@ void Update(float deltaTime, sf::RenderWindow *window)
         e->CheckCollision(blocks, deltaTime);
         e->checkPlayerCollision(player);
     }
-
 }
 
 
@@ -179,6 +164,5 @@ void Render(sf::RenderWindow* window, Renderer& renderer)
         //e->showHitBox(window);
     }
 
-    //menu.draw(window);
 }
 

@@ -88,6 +88,11 @@ void Map::Draw(Renderer& renderer)
 		int y = 0;
 		for (const auto& cell : column)
 		{
+			if (x % 20 == 0 && y % 20 == 0)
+			{
+				renderer.Draw(Resources::textures["BackgroundBrickTiled.png"], { cellSize * x , cellSize * y },
+					{ cellSize * 20, cellSize * 20 }, sf::IntRect({ 0, 0 }, { 280, 280 }));
+			}
 			switch (cell)
 			{
 			case 1:
@@ -96,11 +101,12 @@ void Map::Draw(Renderer& renderer)
 				break;
 			case 2:
 				renderer.Draw(Resources::textures["Door.png"], { cellSize * x , cellSize * y },
-					{ cellSize, cellSize }, sf::IntRect({ 1,1 }, { 14, 14 }));
+					{ cellSize, cellSize }, sf::IntRect({ 0, 0 }, { 16, 15 }));
 				break;
 			}
+			
+			
 			y++;
-
 		}
 		
 		x++;

@@ -6,6 +6,7 @@
 class Player {
 public:
 	bool isJumping = false;
+	bool onGround = false;
 	float maxSpeed = 800.f;
 	Player(sf::Vector2f hitBoxSize, sf::Vector2f position, sf::IntRect textureRect, sf::Texture& player_Texture, sf::Vector2f size);
 	// Hitbox
@@ -43,7 +44,7 @@ private:
 	sf::Vector2f offset = { 3.f, 6.f };
 	sf::Vector2f position;
 	sf::Vector2f size;
-	float maxJumpTime = 0.3f;
+	float maxJumpTime = 1.f;
 	float speed = 800.0f;
 	sf::Clock jumpClock;
 	bool facingLeft = false;
