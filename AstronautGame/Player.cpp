@@ -259,3 +259,16 @@ void Player::checkCollision(std::vector<std::vector<sf::RectangleShape>>& blocks
 
 	onGround = tempGroundCheck;
 }
+
+bool Player::checkSpikeCollision(std::vector<sf::CircleShape>& spikes)
+{
+	for (auto& spike : spikes)
+	{
+		if (hitBox.getGlobalBounds().findIntersection(spike.getGlobalBounds()))
+		{
+			return true;
+		}
+	}
+	return false;
+}
+

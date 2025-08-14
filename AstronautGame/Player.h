@@ -25,6 +25,7 @@ public:
 	void setPosition(sf::Vector2f newPos);
 	void setVelocity(sf::Vector2f newVelocity);
 	void checkCollision(std::vector<std::vector<sf::RectangleShape>>& blocks);
+	bool checkSpikeCollision(std::vector<sf::CircleShape>& spikes);
 
 	sf::Vector2f getPosition();
 	sf::Vector2f getSize();

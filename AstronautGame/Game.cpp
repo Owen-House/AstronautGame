@@ -29,11 +29,14 @@ extern Player* player = nullptr;
 sf::Vector2f playerStartPosition = { 80, 600 };
 
 // Enemies
-std::vector<Enemy*> enemies;
+
 
 // Map stuff
 std::vector<std::vector<sf::RectangleShape>> blocks;
+std::vector<Enemy*> enemies;
 std::vector<sf::RectangleShape> doors;
+std::vector<sf::CircleShape> spikes;
+
 float map_cell_size = 54;
 Map map(map_cell_size);
 Camera camera(1080);
@@ -45,10 +48,11 @@ bool inMenu = true;
 int currentLevel = 1;
 int maxLevels = 2;
 bool changeLevels = false;
+
 static void loadLevel(int level)
 {
     std::string levelName = "level" + std::to_string(level) + ".png";
-    map.CreateFromImage(Resources::levels[levelName], blocks, playerStartPosition, enemies, doors);
+    map.CreateFromImage(Resources::levels[levelName], blocks, playerStartPosition, enemies, doors, spikes);
 }
 
 void resetGame()
@@ -129,6 +133,12 @@ void Update(float deltaTime, sf::RenderWindow *window)
     player->getGridPos(map);
     player->checkCollision(blocks);
 
+    if (player->checkSpikeCollision(spikes))
+    {
+        std::cout << "GAME OVER" << std::endl;
+        resetGame();
+    }
+
     camera.moveWithPlayer(player, map, window->getSize());
 
     for (auto& door : doors)
@@ -156,7 +166,8 @@ void Render(sf::RenderWindow* window, Renderer& renderer)
 {
     map.Draw(renderer);
 
-    player->drawHitBox(window);
+
+    //player->drawHitBox(window);
     player->Draw(renderer);
 
     for (Enemy* e : enemies)
@@ -164,6 +175,5 @@ void Render(sf::RenderWindow* window, Renderer& renderer)
         e->Draw(renderer);
         //e->showHitBox(window);
     }
-
 }
 
