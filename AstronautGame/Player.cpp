@@ -1,7 +1,7 @@
 #include <iostream>
 #include <SFML/Graphics.hpp>
 #include "Player.h"
-#include "Renderer.h"
+#include "Map.h"
 
 
 Player::Player(sf::Vector2f hitBoxSize, sf::Vector2f position, sf::IntRect spriteRect, sf::Texture &player_texture, sf::Vector2f size)
@@ -70,13 +70,13 @@ void Player::gatherMovementInputs(float deltaTime, sf::Clock& animationClock)
 
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Scan::D)) // Move Right
 	{
-		velocity.x = speed * deltaTime;
+		velocity.x += speed * deltaTime;
 		runningAnimation(animationClock);
 		moving = true;
 	}
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Scan::A)) // Move Left
 	{
-		velocity.x = -speed * deltaTime;
+		velocity.x += -speed * deltaTime;
 		runningAnimation(animationClock);
 		moving = true;
 	}
@@ -133,6 +133,14 @@ sf::Vector2f& Player::getVelocity()
 	return velocity;
 }
 
+void Player::getGridPos(Map& map)
+{
+	float cellSize = map.cellSize;
+
+	gridPos.x = int (player->position.x) / cellSize;
+	gridPos.y = int (player->position.y) / cellSize;
+}
+
 void Player::setVelocity(sf::Vector2f newVelocity)
 {
 	velocity = newVelocity;
@@ -185,9 +193,9 @@ void Player::checkCollision(std::vector<std::vector<sf::RectangleShape>>& blocks
 
 	bool tempGroundCheck = false;
 
-	for (unsigned int i = 0; i < blocks.size(); i++)
+	for (unsigned int y = gridPos.y - 2; y <= gridPos.y + 2; y++)
 	{
-		for (auto& block : blocks[i])
+		for (auto& block : blocks[y])
 		{
 			sf::FloatRect playerBounds = hitBox.getGlobalBounds();
 			sf::FloatRect platformBounds = block.getGlobalBounds();
@@ -195,8 +203,6 @@ void Player::checkCollision(std::vector<std::vector<sf::RectangleShape>>& blocks
 			nextPos = playerBounds;
 			nextPos.position.x += velocity.x;
 			nextPos.position.y += getVelocity().y;
-
-
 
 			if (platformBounds.findIntersection(nextPos))
 			{
@@ -207,7 +213,7 @@ void Player::checkCollision(std::vector<std::vector<sf::RectangleShape>>& blocks
 					&& playerBounds.position.x < platformBounds.position.x + platformBounds.size.x
 					&& playerBounds.position.x + playerBounds.size.x > platformBounds.position.x)
 				{
-					getVelocity().y = 0.f;
+					velocity.y = 0.f;
 					setPosition({ playerBounds.position.x, platformBounds.position.y - playerBounds.size.y });
 					jumpClock.restart();
 					isJumping = false;

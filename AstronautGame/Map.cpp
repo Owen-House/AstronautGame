@@ -74,8 +74,9 @@ void Map::CreateFromImage(const sf::Image& image, std::vector< std::vector<sf::R
 				grid[x][y] = 2;
 				block.setPosition({cellSize * x , cellSize * y});
 				doors.push_back(block);
-			}
+			}			
 		}
+		std::cout << "\n";
 	}
 }
 

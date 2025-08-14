@@ -45,7 +45,7 @@ bool inMenu = true;
 int currentLevel = 1;
 int maxLevels = 2;
 bool changeLevels = false;
-void loadLevel(int level)
+static void loadLevel(int level)
 {
     std::string levelName = "level" + std::to_string(level) + ".png";
     map.CreateFromImage(Resources::levels[levelName], blocks, playerStartPosition, enemies, doors);
@@ -126,6 +126,7 @@ void Update(float deltaTime, sf::RenderWindow *window)
         return changeLevel();
 
     player->gatherMovementInputs(deltaTime, animationClock);
+    player->getGridPos(map);
     player->checkCollision(blocks);
 
     camera.moveWithPlayer(player, map, window->getSize());
@@ -155,7 +156,7 @@ void Render(sf::RenderWindow* window, Renderer& renderer)
 {
     map.Draw(renderer);
 
-    //player->drawHitBox(window);
+    player->drawHitBox(window);
     player->Draw(renderer);
 
     for (Enemy* e : enemies)

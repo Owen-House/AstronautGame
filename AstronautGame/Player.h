@@ -3,14 +3,19 @@
 #include <SFML/Graphics.hpp>
 #include "Renderer.h"
 
+class Map;
+
 class Player {
 public:
 	bool isJumping = false;
 	bool onGround = false;
 	float maxSpeed = 800.f;
+	sf::Vector2u gridPos = { 0, 0 };
+
+
 	Player(sf::Vector2f hitBoxSize, sf::Vector2f position, sf::IntRect textureRect, sf::Texture& player_Texture, sf::Vector2f size);
 	// Hitbox
-	void alignPlayerToHitBox();
+	
 	sf::RectangleShape& getHitbox();
 
 	void drawHitBox(sf::RenderWindow* window);
@@ -25,13 +30,8 @@ public:
 	sf::Vector2f getSize();
 	sf::Vector2f& getVelocity();
 
+	void getGridPos(Map& map);
 
-	void flipSprite();
-	void unflipSprite();
-
-	void runningAnimation(sf::Clock& animationClock);
-	void idleAnimation(sf::Clock& animationClock);
-	void jumpingAnimation(sf::Clock& animationClock);
 
 	void Draw(Renderer& renderer);
 
@@ -44,8 +44,19 @@ private:
 	sf::Vector2f offset = { 3.f, 6.f };
 	sf::Vector2f position;
 	sf::Vector2f size;
-	float maxJumpTime = 1.f;
+	float maxJumpTime = 0.3f;
 	float speed = 800.0f;
 	sf::Clock jumpClock;
 	bool facingLeft = false;
+
+	void runningAnimation(sf::Clock& animationClock);
+	void idleAnimation(sf::Clock& animationClock);
+	void jumpingAnimation(sf::Clock& animationClock);
+
+	void alignPlayerToHitBox();
+	void flipSprite();
+	void unflipSprite();
+
+	
+
 };
