@@ -139,6 +139,8 @@ void Player::getGridPos(Map& map)
 
 	gridPos.x = int (player->position.x) / cellSize;
 	gridPos.y = int (player->position.y) / cellSize;
+
+	std::cout << "X: " << gridPos.x << " Y: " << gridPos.y << std::endl;
 }
 
 void Player::setVelocity(sf::Vector2f newVelocity)
@@ -193,8 +195,12 @@ void Player::checkCollision(std::vector<std::vector<sf::RectangleShape>>& blocks
 
 	bool tempGroundCheck = false;
 
-	for (unsigned int y = gridPos.y - 2; y <= gridPos.y + 2; y++)
+	for (int y = gridPos.y - 2; y <= gridPos.y + 2; y++)
 	{
+		if (y <= 0)
+		{
+			y = 0;
+		}
 		for (auto& block : blocks[y])
 		{
 			sf::FloatRect playerBounds = hitBox.getGlobalBounds();

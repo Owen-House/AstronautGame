@@ -10,7 +10,7 @@ public:
 	bool isJumping = false;
 	bool onGround = false;
 	float maxSpeed = 800.f;
-	sf::Vector2u gridPos = { 0, 0 };
+	sf::Vector2i gridPos = { 0, 0 };
 
 
 	Player(sf::Vector2f hitBoxSize, sf::Vector2f position, sf::IntRect textureRect, sf::Texture& player_Texture, sf::Vector2f size);

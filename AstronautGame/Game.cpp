@@ -46,7 +46,7 @@ bool inMenu = true;
 
 // Levels
 int currentLevel = 1;
-int maxLevels = 2;
+int maxLevels = 3;
 bool changeLevels = false;
 
 static void loadLevel(int level)

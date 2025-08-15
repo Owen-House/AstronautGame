@@ -90,7 +90,6 @@ void Map::CreateFromImage(const sf::Image& image, std::vector< std::vector<sf::R
 				spikes.push_back(triangle);
 			}
 		}
-		std::cout << "\n";
 	}
 }
 
