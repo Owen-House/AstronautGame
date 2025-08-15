@@ -17,7 +17,8 @@ public:
 
 	void Draw(Renderer& renderer);
 
-	void resetMap(std::vector< std::vector<sf::RectangleShape>>& blocks, std::vector<Enemy*>& enemies, std::vector<sf::RectangleShape>& doors);
+	void resetMap(std::vector< std::vector<sf::RectangleShape>>& blocks, std::vector<Enemy*>& enemies,
+		std::vector<sf::RectangleShape>& doors, std::vector<sf::CircleShape>& spikes);
 
 	std::vector<std::vector<int>> grid;
 	float cellSize;

@@ -57,7 +57,7 @@ static void loadLevel(int level)
 
 void resetGame()
 {
-    map.resetMap(blocks, enemies, doors);
+    map.resetMap(blocks, enemies, doors, spikes);
     loadLevel(currentLevel);
     player->setPosition(playerStartPosition);
     camera.position.x = 960;
@@ -137,7 +137,7 @@ void Update(float deltaTime, sf::RenderWindow *window)
     {
         std::cout << "GAME OVER" << std::endl;
         resetGame();
-    }
+    } 
 
     camera.moveWithPlayer(player, map, window->getSize());
 

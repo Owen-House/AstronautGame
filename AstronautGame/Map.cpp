@@ -28,7 +28,8 @@ void Map::CreateCheckerboard(size_t width, size_t height)
 
 }
 
-void Map::resetMap(std::vector< std::vector<sf::RectangleShape>>& blocks, std::vector<Enemy*>& enemies, std::vector<sf::RectangleShape>& doors)
+void Map::resetMap(std::vector< std::vector<sf::RectangleShape>>& blocks,
+	std::vector<Enemy*>& enemies, std::vector<sf::RectangleShape>& doors, std::vector<sf::CircleShape>& spikes)
 {
 	grid.clear();
 	for (unsigned int i = 0; i < blocks.size(); i++)
@@ -36,18 +37,21 @@ void Map::resetMap(std::vector< std::vector<sf::RectangleShape>>& blocks, std::v
 		blocks[i].clear();
 	}
 	blocks.clear();
-	doors.clear();
+
 	for (Enemy* e : enemies)
 	{
 		delete e;
 	}
 	enemies.clear();
+
+	doors.clear();
+	spikes.clear();
 }
 
 void Map::CreateFromImage(const sf::Image& image, std::vector< std::vector<sf::RectangleShape>>& blocks,
 	sf::Vector2f& playerStartPosition, std::vector<Enemy*>& enemies, std::vector<sf::RectangleShape>& doors, std::vector<sf::CircleShape>& spikes)
 {
-	resetMap(blocks, enemies, doors);
+	resetMap(blocks, enemies, doors, spikes);
 	grid = std::vector(image.getSize().x, std::vector(image.getSize().y, 0));
 
 	blocks.resize(image.getSize().y);
